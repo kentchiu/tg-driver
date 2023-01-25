@@ -12,16 +12,19 @@ export const Home = () => {
   const stage = useAppSelector((state) => state.auth.stage);
   const phoneNumber = useAppSelector((state) => state.auth.phoneNumber);
 
+  const router = useRouter();
   React.useEffect(() => {
     dispatch(AuthSlice.fetchAuthStage());
 
     if (stage === 'AUTHENTICATED') {
-      dispatch(ChatSlice.refreshChats());
+      dispatch(ChatSlice.refreshChats()).then((val) => {
+        console.log('val', val);
+        router.push('/main');
+      });
       dispatch(ConfigSlice.isNsfw());
     }
   }, [stage, dispatch]);
 
-  const router = useRouter();
   let content;
   if (stage === undefined) {
     content = <Spinner></Spinner>;
@@ -31,7 +34,6 @@ export const Home = () => {
     content = <AuthCodeForm phoneNum={phoneNumber ?? ''}></AuthCodeForm>;
   } else if (stage === 'AUTHENTICATED') {
     content = <Link href="/main">Starting...</Link>;
-    router.push('/main');
   }
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-800 py-2 text-gray-600 ">
