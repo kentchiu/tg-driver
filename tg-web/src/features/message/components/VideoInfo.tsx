@@ -1,9 +1,14 @@
 import { useAppSelector } from '@/app/hooks';
-import { VideoSlice } from '@/features/media';
+import { FileSlice, VideoSlice } from '@/features/media';
 import { DocumentIcon } from '@heroicons/react/24/solid';
 
 export const VideoInfo = ({ videoUid }: { videoUid: number }) => {
   const video = useAppSelector((state) => VideoSlice.selectVideoByUid(state, videoUid));
+  const file = useAppSelector((state) => FileSlice.selectFileByUid(state, video?.file ?? -1));
+  let fileName = video?.fileName;
+  if (fileName === '' && file?.localFilePath) {
+    fileName = file.localFilePath.substring('downloads/videos/'.length);
+  }
   if (!video) {
     return <></>;
   }
@@ -12,8 +17,8 @@ export const VideoInfo = ({ videoUid }: { videoUid: number }) => {
       <div className="flex-shrink-0">
         <DocumentIcon className="h-3 w-3 text-sky-500"></DocumentIcon>
       </div>
-      <div className="flex-shrink flex-grow overflow-hidden whitespace-nowrap" title={video.fileName}>
-        {video.fileName}
+      <div className="flex-shrink flex-grow overflow-hidden whitespace-nowrap" title={fileName}>
+        {fileName}
       </div>
       <div className="flex-shrink-0 text-sky-500">{video.fileSize && Math.round(video.fileSize / 1024 / 1024)} M</div>
     </div>
