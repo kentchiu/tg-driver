@@ -1,34 +1,39 @@
-version: "3.9"  # optional since v1.27.0
+version: "3.9"  
 services:
   db:
     image: mariadb:10.6
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=tg123
+      - MYSQL_ROOT_PASSWORD=tg123 # Default password 
     command: mysqld --lower_case_table_names=1 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
-      - "3306:3306"
+      - "3306:3306" # Export port for development, you can remove it as needed.
     volumes:
-      - "C:/Users/kentc/.tg-driver/database:/var/lib/mysql"
+      - "C:/Users/kentc/.tg-driver/database:/var/lib/mysql" # The path to store database data. Change 'C:/User/kentc' to your home folder
 
+  # Backend image is publish to docker hub
+  # https://hub.docker.com/r/kentchiu/tg-driver-api
+  # Change the image to to upgrade to new version
   backend:
     restart: always
-    image: kentchiu/tg-driver-api:0.1.0
+    image: kentchiu/tg-driver-api:0.1.0  
     depends_on:
       - db
     ports:
-      - "8888:8080"
+      - "8888:8080" # Restful API export to http://localhost:8888
     links:
       - db
-    volumes:
-      - "C:/Users/kentc/.tg-driver:/tg-driver"
+    volumes: 
+      - "C:/Users/kentc/.tg-driver:/tg-driver" # The path to store telegram download data. Change 'C:/User/kentc' to your home folder
 
-
+  # Frontend image is publish to docker hub
+  # https://hub.docker.com/r/kentchiu/tg-drvier-web
+  # Change the image to to upgrade to new version
   frontend:
     restart: always
-    image: kentchiu/tg-drvier-web:0.1.0
+    image: kentchiu/tg-drvier-web:0.1.0  
     ports:
-      - "3333:3000"
+      - "3333:3000" # Web GUI export to http://localhost:3333
 
 
 
