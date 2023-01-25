@@ -8,10 +8,11 @@ export type ImageProps = {
   className?: string;
   file?: File;
   fallbackUrl?: string;
+  autoReload?: boolean;
   onMissingFile?: (src: string) => void;
 };
 
-export const Image = ({ className, file, fallbackUrl = '3.jpg', onMissingFile }: ImageProps) => {
+export const Image = ({ className, file, fallbackUrl = '3.jpg', autoReload = false, onMissingFile }: ImageProps) => {
   const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
   let imgSrc = fallbackUrl;
   if (file) {
@@ -35,9 +36,10 @@ export const Image = ({ className, file, fallbackUrl = '3.jpg', onMissingFile }:
           src={imgSrc}
           className={className}
           onError={(event: SyntheticEvent<HTMLImageElement, Event>) => {
-            // console.error('Missing file:', file);
+            console.log('broken image:', imgSrc);
             setRetried(true);
-            if (file?.fileUniqueId && !retired) {
+            if (file?.fileUniqueId && !retired && autoReload) {
+              console.log('download iamge', file.fileUniqueId);
               FileApi.downloadPhotoFile(file.fileUniqueId)
                 .then((val) => {
                   if (imageRef.current) {

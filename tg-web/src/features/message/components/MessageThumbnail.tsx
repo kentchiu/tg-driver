@@ -11,7 +11,7 @@ export const MessageThumbnail = ({ messageUid }: { messageUid: number }) => {
   return (
     <>
       <div className="relative">
-        <Image file={file} className="w-full cursor-zoom-in"></Image>
+        <Image file={file} className="w-full cursor-zoom-in" autoReload={true}></Image>
         {button}
       </div>
     </>
