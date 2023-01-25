@@ -15,9 +15,10 @@ You will need the [Docker Desktop](https://www.docker.com/products/docker-deskto
 
 ## Intro
 
-![](../tg-driver/doc/assets/home.png)
+![](./doc/assets/home.png)
 
-![](../tg-driver/doc/assets/video.png)
+![](./doc/assets/video.png)
 
-![](../tg-driver/doc/assets/player.png)
+![](./doc/assets/player.png)
+
 
