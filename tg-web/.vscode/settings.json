@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.organizeImports": true,
+    "source.sortMembers": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "cSpell.words": ["clsx", "headlessui", "heroicons", "normalizr", "Passcode", "reduxjs", "tailwindcss", "Uids"]
+}

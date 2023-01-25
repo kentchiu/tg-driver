@@ -1,0 +1,154 @@
+#############################################################
+####
+#### 最上面这个配置是所有环境共用的， 如果需要改动，请先跟 KENT 讨论，
+#### 配置内容以在 Docker Swarm 环境为主
+####
+#############################################################
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-exception: true
+    include-stacktrace: on_param
+
+
+spring:
+  application:
+    name: tg-service
+  datasource:
+    druid:
+      # driver-class-name: oracle.jdbc.OracleDriver # for oracle
+      driver-class-name: org.mariadb.jdbc.Driver # for mariadb
+      url: jdbc:mariadb://db:3306/tg?createDatabaseIfNotExist=true
+      password: tg123
+      username: root
+      stat-view-servlet: # druid 的管理画面
+        enabled: true
+        allow:
+        deny:
+        login-username: admin
+        login-password: tg123
+      validation-query: select 1 # for mariadb
+      # validation-query: select '1' from dual  # for oracle
+      test-while-idle: true # 反闲置短线
+      web-stat-filter: # URI 监控
+        enabled: true
+      filters:
+      filter:
+        stat: # SQL 监控
+          enabled: true
+          #  db type 无法自动被识别时， SQL 监控会出不来
+          db-type: mariadb
+          # db-type: oracle
+          log-slow-sql: true
+          slow-sql-millis: 5000
+        wall: # SQL 防火墙
+          enabled: false
+      aop-patterns: com.kent.*.service.*,com.kent.*.dao.* # spring bean 执行效能监控
+  web:
+    resources:
+      static-locations: file:/tg-driver/tdlight-session
+
+
+kent:
+  tg:
+    home: /tg-driver
+
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*Mapper.xml
+
+logging:
+  level: # LEVEL: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+    com.kent: INFO
+  file:
+    path: /tg-driver/logs/${spring.application.name}
+  logback:
+    rollingpolicy:
+      max-history: 30
+      total-size-cap: 1000MB
+      max-file-size: 10MB
+
+#############################################################
+#### profiles
+#############################################################
+--- # mac
+spring:
+  datasource:
+    druid:
+      url: jdbc:mariadb://localhost:3306/tg?createDatabaseIfNotExist=true
+  config:
+    activate:
+      on-profile: mac
+  web:
+    resources:
+      static-locations: file:/Users/kentchiu/tg-driver/tdlight-session/
+
+
+logging:
+  level: # LEVEL: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+    com.kent: INFO
+    #    com.kent.tg.mapper.MessageMapper: DEBUG
+    #    com.kent.tg.mapper.MessageMapper.insert: INFO
+    #    com.kent.tg.mapper.MessageMapper.delete: DEBUG
+    #    com.kent.tg.mapper.FileMapper: DEBUG
+    com.kent.tg.mapper.ChatMapper: DEBUG
+    com.kent.tg.mapper.MessageMapper: DEBUG
+    com.kent.tg.mapper.MessageVideoMapper: DEBUG
+    com.kent.tg.web.VideoController: DEBUG
+    com.kent.tg.daemon.FileStatusSyncTask: DEBUG
+
+#server:
+#  port: 8080
+#  servlet:
+#    context-path: /api/${spring.application.name}
+
+kent:
+  tg:
+    home: /Users/kentchiu/tg-driver
+
+--- # kent windows pc
+spring:
+  datasource:
+    druid:
+      url: jdbc:mariadb://localhost:3306/tg-test?createDatabaseIfNotExist=true
+  config:
+    activate:
+      on-profile: win
+  web:
+    resources:
+      static-locations: file:c:\tg-driver\tdlight-session
+
+#server:
+#  port: 8080
+#  servlet:
+#    context-path: /api/${spring.application.name}
+
+
+kent:
+  tg:
+    home: c:\tg-driver
+
+logging:
+  level: # LEVEL: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+    com.kent: INFO
+    #    com.kent.tg.mapper.MessageMapper: DEBUG
+    #    com.kent.tg.mapper.MessageMapper.insert: INFO
+    #    com.kent.tg.mapper.MessageMapper.delete: DEBUG
+    #    com.kent.tg.mapper.FileMapper: DEBUG
+    com.kent.tg.mapper.ChatMapper: INFO
+    com.kent.tg.mapper.MessageMapper: INFO
+    com.kent.tg.mapper.MessageVideoMapper: DEBUG
+    com.kent.tg.web.VideoController: DEBUG
+    com.kent.tg.daemon.FileExistingCheckTask: DEBUG

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kent.tg.mapper.ChatMapper">
+
+
+    <select id="findAllWithMessageCount" resultType="java.util.Map">
+        SELECT chat.uid                            uid,
+               chat.chat_id                        chat_id,
+               chat.name                           name,
+               chat.disabled                       disabled,
+               COALESCE(COUNT(message.chat_id), 0) message_count,
+               profile.uid                         "profile.uid",
+               profile.file_size                   "profile.file_size",
+               profile.file_unique_id              "profile.file_unique_id",
+               profile.local_file_path             "profile.local_file_path",
+               profile.last_modified               "profile.last_modified",
+               profile.exist                       "profile.exist"
+        FROM chat
+                 LEFT JOIN message ON message.chat_id = chat.chat_id
+                 LEFT JOIN file profile ON profile.file_unique_id = chat.file_unique_id
+            ${ew.customSqlSegment} #
+        GROUP BY chat.chat_id
+    </select>
+
+    <select id="findAll" resultType="java.util.Map">
+        SELECT chat.uid                uid,
+               chat.chat_id            chat_id,
+               chat.name               name,
+               chat.disabled           disabled,
+               profile.uid             "profile.uid",
+               profile.file_size       "profile.file_size",
+               profile.file_unique_id  "profile.file_unique_id",
+               profile.local_file_path "profile.local_file_path",
+               profile.last_modified   "profile.last_modified",
+               profile.exist           "profile.exist"
+        FROM chat
+                 LEFT JOIN file profile ON profile.file_unique_id = chat.file_unique_id
+            ${ew.customSqlSegment}
+    </select>
+
+
+    <!--    <select id="findAll" resultType="java.util.Map">-->
+    <!--        select chat.uid      uid,-->
+    <!--               chat.name     name,-->
+    <!--               chat.disabled disabled,-->
+    <!--               file.uid      profile_photo_uid-->
+    <!--        from chat-->
+    <!--                 left join file on file.file_unique_id = chat.file_unique_id-->
+    <!--            ${ew.customSqlSegment}-->
+    <!--    </select>-->
+
+</mapper>

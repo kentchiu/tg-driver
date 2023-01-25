@@ -1,0 +1,35 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  db:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=tg123
+    command: mysqld --lower_case_table_names=1 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - "${HOME}/.tg-driver/database:/var/lib/mysql"
+
+  backend:
+    restart: always
+    image: tg-api:latest
+    depends_on:
+      - db
+    ports:
+      - "8888:8080"
+    links:
+      - db
+    volumes:
+      - "${HOME}/.tg-driver:/tg-driver"
+
+
+  frontend:
+    build: ../tg-web
+    restart: always
+    image: tg-web:latest
+    ports:
+      - "3333:3000"
+
+
+

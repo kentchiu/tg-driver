@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kent.tg.mapper.MessageMapper">
+
+
+    <select id="countFindAll" resultType="int">
+        select count(*)
+        from message message
+                 left join message_text text on text.message_uid = message.uid
+                 left join message_photo photo on photo.message_uid = message.uid
+                 left join message_video video on video.message_uid = message.uid
+                 left join chat chat on message.chat_id = chat.chat_id
+                 left join file photo_file on photo_file.file_unique_id = photo.file_unique_id
+                 left join file video_file on video_file.file_unique_id = video.file_unique_id
+            ${ew.customSqlSegment}
+    </select>
+
+    <select id="findAll" resultType="java.util.Map">
+        select message.uid                "uid",
+               message.type               "type",
+               message.date               "date",
+               message.message_id         "message_id",
+               message.read_at            "read_at",
+               message.delete_at          "delete_at",
+               chat.uid                   "chat.uid",
+               chat.chat_id               "chat.chat_id",
+               chat.name                  "chat.name",
+               text.uid                   "text.uid",
+               text.text                  "text.text",
+               photo.uid                  "photo.uid",
+               photo.caption              "photo.caption",
+               photo.height               "photo.height",
+               photo.width                "photo.width",
+               photo_file.uid             "photo.file.uid",
+               photo_file.file_size       "photo.file.file_size",
+               photo_file.file_unique_id  "photo.file.file_unique_id",
+               photo_file.local_file_path "photo.file.local_file_path",
+               photo_file.last_modified   "photo.file.last_modified",
+               photo_file.exist           "photo.file.exist",
+               video.uid                  "video.uid",
+               video.caption              "video.caption",
+               video.duration             "video.duration",
+               video.mime_type            "video.mime_type",
+               video.height               "video.height",
+               video.width                "video.width",
+               video.file_name            "video.file_name",
+               video.file_size            "video.file_size",
+               video_file.uid             "video.file.uid",
+               video_file.file_size       "video.file.size",
+               video_file.file_size       "video.file.file_size",
+               video_file.file_unique_id  "video.file.file_unique_id",
+               video_file.local_file_path "video.file.local_file_path",
+               video_file.last_modified   "video.file.last_modified",
+               video_file.exist           "video.file.exist"
+        from message message
+                 left join message_text text on text.message_uid = message.uid
+                 left join message_photo photo on photo.message_uid = message.uid
+                 left join message_video video on video.message_uid = message.uid
+                 left join chat chat on message.chat_id = chat.chat_id
+                 left join file photo_file on photo_file.file_unique_id = photo.file_unique_id
+                 left join file video_file on video_file.file_unique_id = video.file_unique_id
+            ${ew.customSqlSegment}
+    </select>
+</mapper>

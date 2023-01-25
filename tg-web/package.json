@@ -1,0 +1,51 @@
+{
+  "name": "with-tailwindcss",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "format": "npx prettier --write src",
+    "lint": "npx eslint .",
+    "version": "npx npm-check",
+    "dev:css": "tailwindcss -o .next/tailwind.css -w",
+    "build:css": "tailwindcss -o .next/tailwind.css"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.7",
+    "@heroicons/react": "^2.0.13",
+    "@reduxjs/toolkit": "^1.9.1",
+    "axios": "^1.2.1",
+    "clsx": "^1.2.1",
+    "dayjs": "^1.11.7",
+    "next": "^13.0.7",
+    "normalizr": "3.6.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.0",
+    "react-player": "^2.11.0",
+    "react-redux": "^8.0.4",
+    "reselect": "^4.1.7",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/line-clamp": "^0.4.2",
+    "@types/node": "18.11.17",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "@types/react-redux": "7.1.24",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "autoprefixer": "^10.4.13",
+    "eslint": "^8.30.0",
+    "eslint-config-next": "^13.0.7",
+    "postcss": "^8.4.20",
+    "prettier": "^2.8.1",
+    "prettier-plugin-tailwindcss": "^0.2.1",
+    "tailwindcss": "^3.2.4",
+    "typescript": "4.9.4"
+  }
+}

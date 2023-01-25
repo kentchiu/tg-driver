@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kent.tg.mapper.MessageVideoMapper">
+
+    <select id="findOneByMessageUid" resultType="java.util.Map">
+        select video.uid,
+               video.message_uid,
+               video.caption,
+               video.width,
+               video.height,
+               video.duration,
+               video.file_size,
+               video.file_name,
+               video.mime_type,
+               video.supports_streaming,
+               video.file_unique_id,
+               video.thumbnail_id,
+               f.uid,
+               f.file_size,
+               f.file_unique_id,
+               f.local_file_path,
+               f.last_modified
+        from message_video video
+                 left join file f on video.file_unique_id = f.file_unique_id
+                 left join message on message.uid = video.message_uid
+        where message.type != 'MessageVideoX'
+          AND video.message_uid = #{messageUid}
+    </select>
+
+</mapper>
