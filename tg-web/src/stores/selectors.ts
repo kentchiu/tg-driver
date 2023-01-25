@@ -67,7 +67,7 @@ export const selectPhotoFileByMessageUid = (state: AppState, messageUid: number)
 };
 
 const selectAllVideoFiles = createSelector([(state) => state, selectAllFiles], (state, files) => {
-  const videoFiles = files.filter((val) => val.localFilePath.endsWith('.mp4')).filter((val) => val.exist);
+  const videoFiles = files.filter((val) => val.localFilePath.endsWith('.mp4') || val.localFilePath.endsWith('.MP4')).filter((val) => val.exist);
   return videoFiles;
 });
 

@@ -44,6 +44,7 @@ const MessageVideoPage = () => {
 
 const MessageVideoGrid = () => {
   const videoFiles = useAppSelector(Selectors.selectVideoFiles);
+  console.log('videoFiles', videoFiles);
   const mv = videoFiles.map((vf) => <GridItem videoFileUid={vf.uid} key={vf.uid}></GridItem>);
   return (
     <>
