@@ -1,6 +1,7 @@
 import { Card, Image } from '@/app/components';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Selectors } from '@/app/stores';
+import { formatDate } from '@/app/utils';
 import { Avatar, ChatSlice } from '@/features/chat';
 import { MainMenu } from '@/features/layout';
 import { MessageSlice, MessageUiSlice, useVideoFile, VideoInfo } from '@/features/message';
@@ -44,7 +45,6 @@ const MessageVideoPage = () => {
 
 const MessageVideoGrid = () => {
   const videoFiles = useAppSelector(Selectors.selectVideoFiles);
-  console.log('videoFiles', videoFiles);
   const mv = videoFiles.map((vf) => <GridItem videoFileUid={vf.uid} key={vf.uid}></GridItem>);
   return (
     <>
@@ -74,15 +74,18 @@ const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
   }
 
   const handleDump = () => {
-    console.log(JSON.stringify(forTest, undefined, '\t'));
-    const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
-    console.log('videoCaptions', videoCaptions);
-    const videoFileNames = uniqByReduce(videos.map((val) => val.fileName));
-    console.log('videoCaptions', videoFileNames);
-    const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
-    console.log('photoCaptions', photoCaptions);
-    const captions = uniqByReduce(videoCaptions.concat(photoCaptions));
-    console.log('captions', captions);
+    const debug = false;
+    if (debug) {
+      console.log(JSON.stringify(forTest, undefined, '\t'));
+      const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
+      const videoFileNames = uniqByReduce(videos.map((val) => val.fileName));
+      const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
+      const captions = uniqByReduce(videoCaptions.concat(photoCaptions));
+      console.log('videoCaptions', videoCaptions);
+      console.log('videoCaptions', videoFileNames);
+      console.log('photoCaptions', photoCaptions);
+      console.log('captions', captions);
+    }
   };
 
   return (
@@ -114,7 +117,7 @@ function uniqByReduce<T>(array: T[]): T[] {
 }
 
 const Info = ({ videoFileUid }: { videoFileUid: number }) => {
-  const { messages, videos, photos, photoFiles } = useVideoFile(videoFileUid);
+  const { videos, videoFile } = useVideoFile(videoFileUid);
   return (
     <div className="flex h-full flex-col gap-2 p-1 text-sm">
       <VideoInfo videoUid={videos[0].uid}></VideoInfo>
@@ -124,7 +127,7 @@ const Info = ({ videoFileUid }: { videoFileUid: number }) => {
 
       <div className="flex  items-center justify-between">
         <Avatars videoFileUid={videoFileUid}></Avatars>
-        <div> 12:00</div>
+        {videoFile && <Time date={videoFile.lastModified}></Time>}
       </div>
     </div>
   );
@@ -159,6 +162,10 @@ const Avatars = ({ videoFileUid }: { videoFileUid: number }) => {
       <dt className="flex justify-end -space-x-1.5 ">{avatars}</dt>
     </dl>
   );
+};
+
+const Time = ({ date }: { date: number }) => {
+  return <div className="text-right text-xs text-gray-700">{formatDate(new Date(date))}</div>;
 };
 
 export default MessageVideoPage;

@@ -7,7 +7,7 @@ export const listMessages = (params: URLSearchParams): Promise<PagingData<Messag
   return axios.get(`/messages?${params.toString()}`, {
     transformResponse: (data) => {
       return JSON.parse(data, (key, value) => {
-        if (key === 'date') {
+        if (key === 'date' || key === 'lastModified:') {
           return new Date(value).getTime();
         } else {
           return value;

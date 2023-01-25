@@ -43,7 +43,6 @@ export const Image = ({ className, file, fallbackUrl = '3.jpg', onMissingFile }:
                   if (imageRef.current) {
                     imageRef.current.src = imgSrc;
                   }
-                  console.log(val);
                 })
                 .catch((error) => {
                   console.warn(error);

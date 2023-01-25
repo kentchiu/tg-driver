@@ -25,18 +25,9 @@ export interface File {
   exist: boolean;
   fileSize: number;
   fileUniqueId: string;
-  lastModified: Date;
+  lastModified: number;
   localFilePath: string;
 }
-
-/**
- * 實體檔案屬性
- */
-// export interface File {
-//   existed: boolean;
-//   createdAt?: number;
-//   modifiedAt?: number;
-// }
 
 export interface DownloadItem {
   path: string;
