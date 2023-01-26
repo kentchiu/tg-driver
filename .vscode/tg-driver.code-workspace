@@ -7,5 +7,7 @@
       "path": "../../tg-private"
     }
   ],
-  "settings": {}
+  "settings": {
+    "cSpell.words": ["kentchiu"]
+  }
 }
