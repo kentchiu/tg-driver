@@ -1,7 +1,5 @@
 package com.kent.tg.daemon;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.kent.base.domain.DomainUtil;
 import com.kent.base.exception.ResourceNotFoundException;
 import com.kent.tg.client.Telegram;
@@ -20,7 +18,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -45,11 +42,6 @@ public class VideoDownloadTask {
     @Autowired
     private Telegram telegram;
 
-    protected long getDownloadSizeLimit() {
-        BigDecimal sizeLimit = BigDecimal.valueOf(downloadSize).multiply(BigDecimal.valueOf(com.kent.tg.domain.File.MEGA_BYTES));
-        return sizeLimit.longValue();
-    }
-
     @Async
     @Scheduled(cron = "0 0/1 * * * * ") // every 1 minute
     public void download() {
@@ -59,24 +51,21 @@ public class VideoDownloadTask {
                     logger.info("File already downloaded : {} -> {}", msg.get("fileUniqueId"), msg.get("localFilePath"));
                     return msg.get("fileUniqueId").toString();
                 }
-        ).collect(Collectors.toSet()).forEach(fileUniqueId -> this.removeFormQueue(fileUniqueId));
+        ).collect(Collectors.toSet()).forEach(fileUniqueId -> this.removeFromQueueByFileUniqueId(fileUniqueId));
         int remainds = queueSize;
-
 
         Path videoHome = TgFileUtils.getInstance().getPathByName(TgFileUtils.VIDEO_HOME);
         File[] allVideoFiles = videoHome.toFile().listFiles();
 
-        List<String> completeds = Arrays.stream(allVideoFiles).map(val -> val.getName()).toList();
+        List<String> completes = Arrays.stream(allVideoFiles).map(val -> val.getName()).toList();
         List<Map<String, Object>> toBeDownloads = messages.stream().filter(val -> {
             String localFilePath = (String) val.get("localFilePath");
             if (StringUtils.isNotBlank(localFilePath)) {
                 String fileName = StringUtils.substringAfter(localFilePath, "/downloads/videos/");
-                return !completeds.contains(fileName);
+                return !completes.contains(fileName);
             }
             return true;
         }).toList();
-
-//            logger.info("Download Task: process from message id: {}, {} records to be process", getCurrentId(), toBeDownloads.size());
 
         for (Map<String, Object> message : toBeDownloads) {
             String localFilePath = (String) message.get("localFilePath");
@@ -97,8 +86,6 @@ public class VideoDownloadTask {
                 break;
             }
         }
-
-
         logger.info("End auto download task, ({}) tasks", messages.size());
     }
 
@@ -113,12 +100,10 @@ public class VideoDownloadTask {
         var messageId = msg.getMessageId();
 
         telegram.sendAsynchronously(new TdApi.GetMessage(chatId, messageId), tgMsgResult -> {
+            logger.info("--->messageUid", messageUid);
             if (tgMsgResult.isError()) {
-                logger.error("Video Not Found - charId: {}, messageId: {}, remove from DB", chatId, messageId);
-                LambdaUpdateWrapper<Message> wrapper = Wrappers.lambdaUpdate(Message.class);
-                wrapper.eq(Message::getChatId, chatId).eq(Message::getMessageId, messageId);
-                wrapper.set(Message::getType, "MessageVideoX");
-                messageService.update(wrapper);
+                logger.error("Video Not Found - charId: {}, messageId: {}, remove from Queue", chatId, messageId);
+                removeFromQueueMessageUid(messageUid);
             } else {
                 TdApi.Message tgMsg = (TdApi.Message) tgMsgResult.get();
                 if (tgMsg.content instanceof TdApi.MessageVideo mv) {
@@ -144,13 +129,19 @@ public class VideoDownloadTask {
         return messages;
     }
 
-    public void removeFormQueue(String uniqueId) {
+    public void removeFromQueueByFileUniqueId(String uniqueId) {
         messages.removeIf(m -> {
             String fileUniqueId = (String) m.get("fileUniqueId");
             return StringUtils.equals(uniqueId, fileUniqueId);
         });
     }
 
+    public void removeFromQueueMessageUid(long messageUid) {
+        messages.removeIf(m -> {
+            long uid = (long) m.get("uid");
+            return messageUid == uid;
+        });
+    }
 
 }
 

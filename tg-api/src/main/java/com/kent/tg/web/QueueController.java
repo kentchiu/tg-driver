@@ -42,7 +42,7 @@ public class QueueController {
     @Operation(summary = "remove message in queue", description = "message in queue")
     @DeleteMapping("/queue")
     void removeFromQueue(@RequestParam String fileUniqueId) {
-        downloadTask.removeFormQueue(fileUniqueId);
+        downloadTask.removeFromQueueByFileUniqueId(fileUniqueId);
     }
 
 }

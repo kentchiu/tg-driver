@@ -39,7 +39,7 @@ public class UpdateFileListener {
             downloadingFiles.invalidate(uniqueId);
         }
         downloadingFiles.put(uniqueId, file);
-        downloadTask.removeFormQueue(uniqueId);
+        downloadTask.removeFromQueueByFileUniqueId(uniqueId);
     }
 
     public Map<String, TdApi.File> getDownloadingFiles() {

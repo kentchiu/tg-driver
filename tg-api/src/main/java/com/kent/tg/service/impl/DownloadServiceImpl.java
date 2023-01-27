@@ -90,7 +90,7 @@ public class DownloadServiceImpl {
             logger.error("Download file fail: {}", file.id);
         } else {
             TdApi.File file2 = objectResult.get();
-                    logger.info("Download file success: {} - {}", file2.remote.uniqueId, file2.local.path);
+            logger.info("Download file success: {} - {}", file2.remote.uniqueId, file2.local.path);
             updateDownloadStatus(file2);
         }
     }
