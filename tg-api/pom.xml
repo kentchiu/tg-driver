@@ -154,10 +154,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <!--                <version>3.8.1</version>-->
-                <!--				<configuration>-->
-                <!--					<release>16</release>-->
-                <!--				</configuration>-->
             </plugin>
 
 
@@ -176,10 +172,6 @@
                     </container>
                     <from>
                         <image>docker.io/kentchiu/tdlight-java:latest</image>
-                        <auth>
-                            <username>kentchiu</username>
-                            <password>r6rskp4XNaKh</password>
-                        </auth>
                     </from>
                     <to>
                         <image>${project.artifactId}:${docker-image.version}</image>
@@ -187,16 +179,6 @@
                     <allowInsecureRegistries>true</allowInsecureRegistries>
                 </configuration>
             </plugin>
-
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.kent.Example</mainClass>
-                </configuration>
-            </plugin>
-            -->
 
             <plugin>
                 <groupId>org.flywaydb</groupId>
