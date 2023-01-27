@@ -18,6 +18,13 @@ export const AuthCodeForm = ({ phoneNum }: { phoneNum: string }) => {
   const handleSendCode = (event: any) => {
     dispatch(updateAuthCode(authCode));
   };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (event.code === 'Enter') {
+      dispatch(updateAuthCode(authCode));
+    }
+  };
+
   return (
     <>
       <form action="" className="mt-6 mb-0 w-72 space-y-4">
@@ -34,6 +41,7 @@ export const AuthCodeForm = ({ phoneNum }: { phoneNum: string }) => {
               name="code"
               value={authCode}
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
           </div>
         </div>

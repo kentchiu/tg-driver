@@ -17,11 +17,14 @@ export const Home = () => {
     dispatch(AuthSlice.fetchAuthStage());
 
     if (stage === 'AUTHENTICATED') {
-      dispatch(ChatSlice.refreshChats()).then((val) => {
-        console.log('val', val);
-        router.push('/main');
-      });
       dispatch(ConfigSlice.isNsfw());
+      dispatch(ChatSlice.refreshChats())
+        .unwrap()
+        .then(() => {
+          setTimeout(() => {
+            router.push('/main');
+          }, 1000);
+        });
     }
   }, [stage, dispatch]);
 

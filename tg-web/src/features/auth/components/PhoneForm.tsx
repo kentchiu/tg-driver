@@ -1,8 +1,9 @@
 import { Spinner } from '@/app/components';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import clsx from 'clsx';
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
 import { AuthSlice } from '../stores';
+import { fetchAuthStage } from '../stores/auth.slice';
 import { ICON_BUTTON_STYLE, INPUT_STYLE } from './style';
 
 export const PhoneForm = () => {
@@ -25,9 +26,20 @@ export const PhoneForm = () => {
 
   const handleNext = (event: any) => {
     dispatch(AuthSlice.updatePhoneNumber(`${countryCode}${phoneNum}`));
+    // Workaround: update auth stage after updatePhoneNumber
     setTimeout(() => {
-      dispatch(AuthSlice.fetchAuthStage());
+      dispatch(fetchAuthStage());
     }, 10000);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.code === 'Enter') {
+      dispatch(AuthSlice.updatePhoneNumber(`${countryCode}${phoneNum}`));
+      // Workaround: update auth stage after updatePhoneNumber
+      setTimeout(() => {
+        dispatch(fetchAuthStage());
+      }, 10000);
+    }
   };
 
   return (
@@ -46,6 +58,7 @@ export const PhoneForm = () => {
               name="countryCode"
               value={countryCode}
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
             <input
               type="tel"
@@ -54,6 +67,7 @@ export const PhoneForm = () => {
               name="phoneNum"
               value={phoneNum}
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
           </div>
         </div>
