@@ -12,7 +12,6 @@ export const VideoInfo = ({
   lineClamp = undefined
 }: {
   videoFileUid: number;
-  className?: string;
   stretch?: boolean;
   lineClamp?: LineClamp;
 }) => {
@@ -57,7 +56,6 @@ const Captions = ({ videoFileUid, lineClamp }: { videoFileUid: number; lineClamp
     default:
       line = '';
   }
-  console.log('line', line);
   const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
   const { videos, photos } = useVideoFile(videoFileUid);
   const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
@@ -76,7 +74,7 @@ const Avatars = ({ videoFileUid }: { videoFileUid: number }) => {
   const avatars = messages.map((message) => {
     const chat = chatEntities[message.chat];
     return (
-      <div key={message.chat} title={chat?.name}>
+      <div key={`${message.uid}`} title={chat?.name}>
         <Avatar chatUid={message.chat} size="xs"></Avatar>
       </div>
     );

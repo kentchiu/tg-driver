@@ -1,10 +1,12 @@
 import { useAppSelector } from '@/app/hooks';
 import { FileSlice, VideoSlice } from '@/features/media';
 import { DocumentIcon } from '@heroicons/react/24/solid';
+import clsx from 'clsx';
 
 export const VideoFileInfo = ({ videoUid }: { videoUid: number }) => {
   const video = useAppSelector((state) => VideoSlice.selectVideoByUid(state, videoUid));
   const file = useAppSelector((state) => FileSlice.selectFileByUid(state, video?.file ?? -1));
+  const nsfw = useAppSelector((state) => state.configs.nsfw);
   let fileName = video?.fileName;
   if (fileName === '' && file?.localFilePath) {
     fileName = file.localFilePath.substring('downloads/videos/'.length);
@@ -17,7 +19,10 @@ export const VideoFileInfo = ({ videoUid }: { videoUid: number }) => {
       <div className="flex-shrink-0">
         <DocumentIcon className="h-3 w-3 text-sky-500"></DocumentIcon>
       </div>
-      <div className="flex-shrink flex-grow overflow-hidden whitespace-nowrap" title={fileName}>
+      <div
+        className={clsx('flex-shrink flex-grow overflow-hidden whitespace-nowrap', { 'blur-sm': nsfw })}
+        title={fileName}
+      >
         {fileName}
       </div>
       <div className="flex-shrink-0 text-sky-500">{video.fileSize && Math.round(video.fileSize / 1024 / 1024)} M</div>
