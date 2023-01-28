@@ -5,7 +5,7 @@ import { PhotoSlice, VideoSlice } from '@/features/media';
 import { ConfigSlice } from '@/features/misc';
 import clsx from 'clsx';
 import { selectMessageByUid } from '../stores/message.slice';
-import { VideoInfo } from './VideoInfo';
+import { VideoFileInfo } from './VideoFileInfo';
 
 export const MessageInfo = ({ messageUid }: { messageUid: number }) => {
   const message = useAppSelector((state) => selectMessageByUid(state, messageUid));
@@ -72,7 +72,7 @@ const VideoInfo2 = ({ messageUid }: { messageUid: number }) => {
     return undefined;
   });
   if (video) {
-    return <VideoInfo videoUid={video.uid}></VideoInfo>;
+    return <VideoFileInfo videoUid={video.uid}></VideoFileInfo>;
   }
   return <></>;
   // if (message && photo) {

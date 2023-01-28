@@ -1,10 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { AppState, Selectors } from '@/app/stores';
-import { toDuration } from '@/app/utils';
-import { Avatar, ChatSlice } from '@/features/chat';
+import { ChatSlice } from '@/features/chat';
 import { MainMenu } from '@/features/layout';
 import { PlayerHooks, Toolbar, VideoPlayer } from '@/features/media';
-import { MessageSlice, MessageUiSlice, useVideoFile } from '@/features/message';
+import { MessageSlice, MessageUiSlice, useVideoFile, VideoInfo } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
 import clsx from 'clsx';
 import React from 'react';
@@ -27,7 +26,6 @@ const PlayerPage = () => {
     dispatch(ChatSlice.fetchChats());
     dispatch(MessageSlice.fetchVideoMessages());
   }, [dispatch]);
-
   const videoFiles = useAppSelector(Selectors.selectVideoFiles);
   const videoFileUid = useAppSelector((state: AppState) => state.messageUi.currentVideoFileUid);
   const playerSource = PlayerHooks.usePlayerSource(videoFileUid);
@@ -51,7 +49,7 @@ const PlayerPage = () => {
             <nav className="flex h-full w-96">
               <div className="w-full flex-col overflow-y-auto bg-gray-800">
                 <Toolbar></Toolbar>
-                <Info videoFileUid={videoFileUid} />
+                <VideoInfo videoFileUid={videoFileUid} stretch={false} />
               </div>
             </nav>
             <main className="mb-14 flex w-full flex-col overflow-y-auto overflow-x-hidden bg-gray-900">
@@ -66,36 +64,43 @@ const PlayerPage = () => {
   );
 };
 
-const Info = ({ videoFileUid }: { videoFileUid: number }) => {
-  const { messages, videos, photos, photoFiles } = useVideoFile(videoFileUid);
-  const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
-  const msgs = messages.map((message) => {
-    const photoInfos = photos
-      .filter((photo) => photo.uid === message.photo)
-      .map((p) => <div key={p.uid}>{p.caption}</div>);
-    const videoInfos = videos
-      .filter((video) => video.uid === message.video)
-      .map((video) => {
-        return (
-          <>
-            <div key={video.uid + 'caption'}>caption: {video.caption}</div>
-            <div key={video.uid + 'duration'}>duration: {toDuration(video.duration * 1000).format('mm:ss')}</div>
-            <div key={video.uid + 'fileName'}>fileName: {video.fileName}</div>
-            <div key={video.uid + 'size'}>fileSize: {video.fileSize}</div>
-          </>
-        );
-      });
+function uniqByReduce<T>(array: T[]): T[] {
+  return array.reduce((acc: T[], cur: T) => {
+    if (!acc.includes(cur)) {
+      acc.push(cur);
+    }
+    return acc;
+  }, []);
+}
 
-    return (
-      <div key={message.uid} className="flex items-center even:opacity-50">
-        <Avatar chatUid={message.chat} size="xs"></Avatar>
-        <div>
-          <div className={clsx('flex flex-col', { 'blur-sm': nsfw })}>{photoInfos}</div>
-          <div className={clsx('flex flex-col', { 'blur-sm': nsfw })}>{videoInfos}</div>
-        </div>
+const Info = ({ videoFileUid }: { videoFileUid: number }) => {
+  const { videos, videoFile, messages } = useVideoFile(videoFileUid);
+  return (
+    <div className="flex h-full flex-col gap-2 p-1 text-sm">
+      {/* <VideoFileInfo videoUid={videos[0].uid}></VideoFileInfo> */}
+      <div className={clsx('flex flex-grow flex-col')}>
+        <Captions videoFileUid={videoFileUid}></Captions>
       </div>
-    );
-  });
-  return <>{msgs}</>;
+
+      {/* <div className="flex  items-center justify-between">
+        <Avatars videoFileUid={videoFileUid}></Avatars>
+        {videoFile && <Time date={videoFile.lastModified}></Time>}
+      </div> */}
+    </div>
+  );
 };
+
+const Captions = ({ videoFileUid }: { videoFileUid: number }) => {
+  const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
+  const { videos, photos } = useVideoFile(videoFileUid);
+  const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
+  const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
+  const captions = uniqByReduce(videoCaptions.concat(photoCaptions)).map((val, idx) => (
+    <div className={clsx('', { 'blur-sm': nsfw })} key={idx}>
+      {val}
+    </div>
+  ));
+  return <>{captions}</>;
+};
+
 export default PlayerPage;
