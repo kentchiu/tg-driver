@@ -49,7 +49,7 @@ const ListItem = ({ chatUid: chatUid, isActive = false }: { chatUid: number; isA
           <div className="flex flex-grow flex-col p-2">
             <div className={clsx('flex flex-row justify-between')}>
               <div className={clsx({ 'blur-sm': nsfw })}>{chat.name}</div>
-              <div> {chat.unreadCount} </div>
+              <div> {chat.unreadCount >= 0 ? chat.unreadCount : 0} </div>
             </div>
           </div>
         </div>

@@ -31,6 +31,7 @@ const MainLayoutPage = () => {
   const currentMessage = useAppSelector(Selectors.selectCurrentMessage);
   const messageGridRef = useRef<ScrollToHandle>(null);
   const messageUids = useAppSelector(selectMessageUidsOfCurrentChat);
+  const columnCount = useAppSelector((state) => state.messageUi.columnCount);
 
   const handleMarkAllAsRead = () => {
     if (messageGridRef.current) {
@@ -61,6 +62,7 @@ const MainLayoutPage = () => {
                   const value = event.target.valueAsNumber;
                   dispatch(MessageUiSlice.setColumnSize(value));
                 }}
+                value={columnCount}
               ></input>
             </div>
           </header>
@@ -69,11 +71,6 @@ const MainLayoutPage = () => {
               <div className="scrollbar w-full flex-col overflow-y-scroll">
                 <ChatList></ChatList>
               </div>
-              {/* <div className="mx-auto flex w-full px-6 py-8">
-                <div className="flex h-full w-full items-center justify-center border-4 border-dashed border-gray-900 text-xl text-gray-900">
-                  Sidebar
-                </div>
-              </div> */}
             </nav>
             <main className="scrollbar mb-14 flex w-full flex-col overflow-scroll  overflow-x-hidden bg-gray-900">
               <div className="mx-auto flex w-full px-6 py-8">
@@ -81,17 +78,10 @@ const MainLayoutPage = () => {
                   <div className="top-30 absolute z-30 m-3 flex justify-start">
                     <Buttons markAllAsRead={handleMarkAllAsRead} scrollToBottom={handleScrollToEnd}></Buttons>
                   </div>
-                  <MessageGrid ref={messageGridRef}></MessageGrid>
+                  <MessageGrid columnCount={columnCount} ref={messageGridRef}></MessageGrid>
                 </div>
               </div>
             </main>
-            {/* <nav className="flex h-full w-72 bg-yellow-400">
-              <div className="mx-auto flex w-full px-6 py-8">
-                <div className="flex h-full w-full items-center justify-center border-4 border-dashed border-gray-900 text-xl text-gray-900">
-                  Rightbar
-                </div>
-              </div>
-            </nav> */}
           </div>
           {currentMessage && <Popover messageUid={currentMessage?.uid} messageUids={messageUids}></Popover>}
         </div>
@@ -111,6 +101,7 @@ type ButtonsProps = {
   markAllAsRead?: () => void;
   scrollToBottom?: () => void;
 };
+
 const Buttons = ({ markAllAsRead, scrollToBottom }: ButtonsProps) => {
   const dispatch = useAppDispatch();
   const currentChat = useAppSelector(Selectors.selectCurrentChat);

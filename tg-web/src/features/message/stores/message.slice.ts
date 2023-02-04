@@ -44,6 +44,16 @@ export const addToDownloadQueue = createAsyncThunk('message/queue', async (args:
   return await FileApi.addToDownloadQueue(args.messageUid);
 });
 
+export const refreshMessage = createAsyncThunk('message/refresh', async (args: { messageUid: number }) => {
+  const data: Message = await MessageApi.refreshMessage(args.messageUid);
+  const messageSchema = new schema.Object({ chat: chatEntity, photo: photoEntity, video: videoEntity });
+  const normalizeData = normalize(data, messageSchema);
+  // // return { ...normalizeData, total: data.total };
+  console.log('data', normalizeData);
+  // return normalizeData;
+  return normalizeData;
+});
+
 // ********** messageSlice *********
 
 const slice = createSlice({

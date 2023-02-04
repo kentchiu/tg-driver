@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Selectors } from '@/app/stores';
 import { ChatSlice } from '@/features/chat';
 import { MainMenu } from '@/features/layout';
-import { MessageSlice, MessageUiSlice, useVideoFile, VideoInfo } from '@/features/message';
+import { MessageHooks, MessageSlice, MessageUiSlice, VideoInfo } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
@@ -61,8 +61,8 @@ const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const { messages, videos, photos, photoFiles } = useVideoFile(videoFileUid);
-  const forTest = useVideoFile(videoFileUid);
+  const { photos, photoFiles } = MessageHooks.useVideoFile(videoFileUid);
+  const dump = MessageHooks.useVideoFile(videoFileUid);
 
   const photo = photos[0];
   let clx = '';
@@ -71,31 +71,19 @@ const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
   } else {
     clx = 'h-full';
   }
-
-  const handleDump = () => {
-    const debug = false;
-    if (debug) {
-      console.log(JSON.stringify(forTest, undefined, '\t'));
-      const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
-      const videoFileNames = uniqByReduce(videos.map((val) => val.fileName));
-      const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
-      const captions = uniqByReduce(videoCaptions.concat(photoCaptions));
-      console.log('videoCaptions', videoCaptions);
-      console.log('videoCaptions', videoFileNames);
-      console.log('photoCaptions', photoCaptions);
-      console.log('captions', captions);
-    }
-  };
-
   return (
     <Card>
       <Card.Content
-        onClick={() => {
-          dispatch(MessageUiSlice.setCurrentVideoFileUid(videoFileUid));
-          router.push(`/player`, undefined, { shallow: true });
+        onClick={(e) => {
+          if (e.ctrlKey) {
+            console.log(JSON.stringify(dump, undefined, 2));
+          } else {
+            dispatch(MessageUiSlice.setCurrentVideoFileUid(videoFileUid));
+            router.push(`/player`, undefined, { shallow: true });
+          }
         }}
       >
-        <div className="flex h-fit justify-center bg-gray-800" onMouseEnter={handleDump}>
+        <div className="flex h-fit justify-center bg-gray-800">
           <Image file={photoFiles[0]} className={clsx(clx)}></Image>
         </div>
       </Card.Content>
@@ -105,14 +93,5 @@ const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
     </Card>
   );
 };
-
-function uniqByReduce<T>(array: T[]): T[] {
-  return array.reduce((acc: T[], cur: T) => {
-    if (!acc.includes(cur)) {
-      acc.push(cur);
-    }
-    return acc;
-  }, []);
-}
 
 export default MessageVideoPage;

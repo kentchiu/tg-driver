@@ -32,6 +32,11 @@ export const slice = createSlice({
         if (action.payload.entities.photos) {
           photoAdapter.upsertMany(state, action.payload.entities.photos);
         }
+      })
+      .addCase(MessageSlice.refreshMessage.fulfilled, (state, action) => {
+        if (action.payload.entities.photos) {
+          photoAdapter.upsertMany(state, action.payload.entities.photos);
+        }
       });
     // .addCase(MessageVideoSlice.fetchMessageVideos.fulfilled, (state, action) => {
     //   if (action.payload.entities.photos) {

@@ -1,4 +1,4 @@
-import { File, FileApi } from '@/features/media';
+import { File } from '@/features/media';
 import { ConfigSlice } from '@/features/misc';
 import React, { SyntheticEvent } from 'react';
 import { Config } from '../config';
@@ -26,7 +26,6 @@ export const Image = ({ className, file, fallbackUrl = '3.jpg', autoReload = fal
     imgSrc = images[i];
   }
   const imageRef = React.useRef<HTMLImageElement>(null);
-  const [retired, setRetried] = React.useState(false);
 
   return (
     <>
@@ -36,23 +35,6 @@ export const Image = ({ className, file, fallbackUrl = '3.jpg', autoReload = fal
           src={imgSrc}
           className={className}
           onError={(event: SyntheticEvent<HTMLImageElement, Event>) => {
-            console.log('broken image:', imgSrc);
-            setRetried(true);
-            if (file?.fileUniqueId && !retired && autoReload) {
-              console.log('download iamge', file.fileUniqueId);
-              FileApi.downloadPhotoFile(file.fileUniqueId)
-                .then((val) => {
-                  if (imageRef.current) {
-                    imageRef.current.src = imgSrc;
-                  }
-                })
-                .catch((error) => {
-                  console.warn(error);
-                  if (imageRef.current) {
-                    imageRef.current.src = fallbackUrl;
-                  }
-                });
-            }
             onMissingFile && onMissingFile(imgSrc);
           }}
         />

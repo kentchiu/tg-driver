@@ -1,7 +1,7 @@
 import { useAppSelector } from '@/app/hooks';
-import { formatDate } from '@/app/utils';
+import { formatDate, uniqueByReduce } from '@/app/utils';
 import { Avatar, ChatSlice } from '@/features/chat';
-import { useVideoFile, VideoFileInfo } from '@/features/message';
+import { MessageHooks, VideoFileInfo } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
 import clsx from 'clsx';
 
@@ -15,7 +15,7 @@ export const VideoInfo = ({
   stretch?: boolean;
   lineClamp?: LineClamp;
 }) => {
-  const { videos, videoFile } = useVideoFile(videoFileUid);
+  const { videos, videoFile } = MessageHooks.useVideoFile(videoFileUid);
 
   return (
     <div className={clsx('flex flex-col gap-2 p-1 text-sm', { 'h-full': stretch })}>
@@ -57,10 +57,10 @@ const Captions = ({ videoFileUid, lineClamp }: { videoFileUid: number; lineClamp
       line = '';
   }
   const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
-  const { videos, photos } = useVideoFile(videoFileUid);
-  const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
-  const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
-  const captions = uniqByReduce(videoCaptions.concat(photoCaptions)).map((val, idx) => (
+  const { videos, photos } = MessageHooks.useVideoFile(videoFileUid);
+  const videoCaptions = uniqueByReduce(videos.map((val) => val.caption));
+  const photoCaptions = uniqueByReduce(photos.map((val) => val.caption));
+  const captions = uniqueByReduce(videoCaptions.concat(photoCaptions)).map((val, idx) => (
     <div className={clsx(line, { 'blur-sm': nsfw })} key={idx}>
       {val}
     </div>
@@ -69,7 +69,7 @@ const Captions = ({ videoFileUid, lineClamp }: { videoFileUid: number; lineClamp
 };
 
 const Avatars = ({ videoFileUid }: { videoFileUid: number }) => {
-  const { messages } = useVideoFile(videoFileUid);
+  const { messages } = MessageHooks.useVideoFile(videoFileUid);
   const chatEntities = useAppSelector(ChatSlice.selectChatEntities);
   const avatars = messages.map((message) => {
     const chat = chatEntities[message.chat];
@@ -89,12 +89,3 @@ const Avatars = ({ videoFileUid }: { videoFileUid: number }) => {
 const Time = ({ date }: { date: number }) => {
   return <div className="text-right text-xs text-gray-700">{formatDate(new Date(date))}</div>;
 };
-
-function uniqByReduce<T>(array: T[]): T[] {
-  return array.reduce((acc: T[], cur: T) => {
-    if (!acc.includes(cur)) {
-      acc.push(cur);
-    }
-    return acc;
-  }, []);
-}

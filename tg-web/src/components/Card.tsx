@@ -1,3 +1,5 @@
+import { MouseEvent } from 'react';
+
 export declare interface CardProps {
   children?: React.ReactNode;
 }
@@ -14,7 +16,7 @@ const Header = (props: CardProps) => {
 
 export declare interface ContentProps {
   children?: React.ReactNode;
-  onClick: () => void;
+  onClick: (event: MouseEvent<HTMLDivElement>) => void;
 }
 
 const Content = (props: ContentProps) => {

@@ -4,14 +4,23 @@ import { selectPhotoFileByMessageUid } from '@/app/stores/selectors';
 import { MessageSlice } from '@/features/message';
 import { CloudArrowDownIcon } from '@heroicons/react/24/solid';
 import React from 'react';
+import { toast } from 'react-hot-toast';
 
 export const MessageThumbnail = ({ messageUid }: { messageUid: number }) => {
   const button = <DownloadButton messageUid={messageUid}></DownloadButton>;
   const file = useAppSelector((state) => selectPhotoFileByMessageUid(state, messageUid));
+  const handleBrokenThumbnail = (src: string) => {
+    console.error('Broken Thumbnail', src);
+  };
   return (
     <>
       <div className="relative">
-        <Image file={file} className="w-full cursor-zoom-in" autoReload={true}></Image>
+        <Image
+          file={file}
+          className="w-full cursor-zoom-in"
+          autoReload={true}
+          onMissingFile={handleBrokenThumbnail}
+        ></Image>
         {button}
       </div>
     </>

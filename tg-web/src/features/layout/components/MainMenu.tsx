@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 export const MainMenu = () => {
   const router = useRouter();
   const activeMenu = router.pathname;
-  console.log(activeMenu);
   return (
     <>
       <div className="flex gap-5 text-gray-500 first:pl-5 ">

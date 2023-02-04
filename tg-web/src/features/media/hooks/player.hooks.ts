@@ -1,11 +1,11 @@
 import { Config } from '@/app/config';
 import { useAppSelector } from '@/app/hooks';
-import { useVideoFile } from '@/features/message';
+import { MessageHooks } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
 import React from 'react';
 
 export const usePlayerSource = (videoFileUid: number | undefined) => {
-  const { videoFile, messages, videos, photos, photoFiles } = useVideoFile(videoFileUid);
+  const { videoFile, messages, videos, photos, photoFiles } = MessageHooks.useVideoFile(videoFileUid);
   const [thumbnailUrl, setThumbnailUrl] = React.useState('3.jpg');
   const [videoSrc, setVideoSrc] = React.useState<string | undefined>(undefined);
 

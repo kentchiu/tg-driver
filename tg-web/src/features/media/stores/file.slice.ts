@@ -55,6 +55,14 @@ const slice = createSlice({
       })
       .addCase(deleteVideoFile.fulfilled, (state, action) => {
         fileAdapter.removeOne(state, action.meta.arg.uid);
+      })
+      .addCase(MessageSlice.refreshMessage.fulfilled, (state, action) => {
+        if (action.payload.entities.photoFiles) {
+          fileAdapter.upsertMany(state, action.payload.entities.photoFiles);
+        }
+        if (action.payload.entities.videoFiles) {
+          fileAdapter.upsertMany(state, action.payload.entities.videoFiles);
+        }
       });
   }
 });

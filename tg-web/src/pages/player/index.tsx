@@ -3,9 +3,8 @@ import { AppState, Selectors } from '@/app/stores';
 import { ChatSlice } from '@/features/chat';
 import { MainMenu } from '@/features/layout';
 import { PlayerHooks, Toolbar, VideoPlayer } from '@/features/media';
-import { MessageSlice, MessageUiSlice, useVideoFile, VideoInfo } from '@/features/message';
+import { MessageSlice, MessageUiSlice, VideoInfo } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
-import clsx from 'clsx';
 import React from 'react';
 
 /**
@@ -62,45 +61,6 @@ const PlayerPage = () => {
       </div>
     </>
   );
-};
-
-function uniqByReduce<T>(array: T[]): T[] {
-  return array.reduce((acc: T[], cur: T) => {
-    if (!acc.includes(cur)) {
-      acc.push(cur);
-    }
-    return acc;
-  }, []);
-}
-
-const Info = ({ videoFileUid }: { videoFileUid: number }) => {
-  const { videos, videoFile, messages } = useVideoFile(videoFileUid);
-  return (
-    <div className="flex h-full flex-col gap-2 p-1 text-sm">
-      {/* <VideoFileInfo videoUid={videos[0].uid}></VideoFileInfo> */}
-      <div className={clsx('flex flex-grow flex-col')}>
-        <Captions videoFileUid={videoFileUid}></Captions>
-      </div>
-
-      {/* <div className="flex  items-center justify-between">
-        <Avatars videoFileUid={videoFileUid}></Avatars>
-        {videoFile && <Time date={videoFile.lastModified}></Time>}
-      </div> */}
-    </div>
-  );
-};
-
-const Captions = ({ videoFileUid }: { videoFileUid: number }) => {
-  const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
-  const { videos, photos } = useVideoFile(videoFileUid);
-  const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
-  const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
-  const captions = uniqByReduce(videoCaptions.concat(photoCaptions)).map((val, idx) => (
-    <div className={clsx('', { 'blur-sm': nsfw })} key={idx}>
-      {val}
-    </div>
-  ));
-  return <>{captions}</>;
 };
 
 export default PlayerPage;

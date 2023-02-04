@@ -10,7 +10,7 @@ import { setCurrentMessageUid } from '../stores/messageUI.slice';
 import { Message } from '../types';
 
 export const Popover = ({ messageUid, messageUids }: { messageUid: number; messageUids: number[] }) => {
-  const [show, setShow] = React.useState(false);
+  // const [show, setShow] = React.useState(false);
   const dispatch = useAppDispatch();
   const message = useAppSelector((state) => selectMessageByUid(state, messageUid));
   const file = useAppSelector((state) => selectPhotoFileByMessageUid(state, message?.uid ?? -1));
@@ -69,8 +69,8 @@ export const Popover = ({ messageUid, messageUids }: { messageUid: number; messa
             </div>
             <div
               className="relative flex h-full max-w-[80%] flex-shrink-0 flex-col justify-center opacity-100"
-              onMouseEnter={() => setShow(true)}
-              onMouseLeave={() => setShow(false)}
+              // onMouseEnter={() => setShow(true)}
+              // onMouseLeave={() => setShow(false)}
               onClick={(event) => {
                 handleCopyToClipboard(message);
                 event.stopPropagation();
@@ -92,11 +92,11 @@ export const Popover = ({ messageUid, messageUids }: { messageUid: number; messa
               />
             </div>
           </div>
-          {show && (
+          {/* {show && (
             <div className="absolute top-0 left-0">
               <div className="whitespace-pre-wrap break-words bg-slate-800">{JSON.stringify(message, null, 2)}</div>
             </div>
-          )}
+          )} */}
         </div>
       </>
     );

@@ -2,7 +2,7 @@ import { useAppSelector } from '@/app/hooks';
 import { FileSlice, PhotoSlice, VideoSlice } from '@/features/media';
 import { MessageSlice } from '../stores';
 
-export const useDumpMessage = (messageUid: number) => {
+export const useMessage = (messageUid: number) => {
   const message = useAppSelector((state) => {
     const NOT_EXIST_ID = -1;
     const message = MessageSlice.selectMessageByUid(state, messageUid);
