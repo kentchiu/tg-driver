@@ -1,6 +1,7 @@
 import { Card } from '@/app/components';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectTopMessages } from '@/app/stores/selectors';
+import { ConfigSlice } from '@/features/misc';
 import clsx from 'clsx';
 import React, { ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react';
 import { MessageInfo, MessagePhoto, MessageThumbnail } from '.';
@@ -116,6 +117,7 @@ export const MessageGrid = forwardRef<ScrollToHandle, MessageGridProps>(function
 const GridItem = ({ messageUid }: { messageUid: number; banIds?: number[] }) => {
   const dispatch = useAppDispatch();
   const message = useAppSelector((state) => selectMessageByUid(state, messageUid));
+  const debug = useAppSelector(ConfigSlice.selectDebug);
   const dump = useMessage(messageUid);
   return (
     <>
@@ -123,7 +125,9 @@ const GridItem = ({ messageUid }: { messageUid: number; banIds?: number[] }) => 
         <Card.Content
           onClick={(e) => {
             if (e.ctrlKey) {
-              console.log(JSON.stringify(dump, undefined, 2));
+              if (debug) {
+                console.log(JSON.stringify(dump, undefined, 2));
+              }
             } else {
               dispatch(setCurrentMessageUid(messageUid));
             }

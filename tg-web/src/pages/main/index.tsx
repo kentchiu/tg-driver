@@ -15,6 +15,7 @@ const useFetchingEffect = () => {
   React.useEffect(() => {
     dispatch(ChatSlice.fetchChats());
     dispatch(ConfigSlice.isNsfw());
+    dispatch(ConfigSlice.debug());
   }, [dispatch]);
 
   // fetch message

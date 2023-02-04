@@ -14,6 +14,7 @@ const MessageVideoPage = () => {
 
   React.useEffect(() => {
     dispatch(ConfigSlice.isNsfw());
+    dispatch(ConfigSlice.debug());
     dispatch(ChatSlice.fetchChats());
     dispatch(MessageSlice.fetchVideoMessages());
   }, [dispatch]);
@@ -60,6 +61,7 @@ const MessageVideoGrid = () => {
 const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const debug = useAppSelector((state) => state.configs.debug);
 
   const { photos, photoFiles } = MessageHooks.useVideoFile(videoFileUid);
   const dump = MessageHooks.useVideoFile(videoFileUid);
@@ -76,7 +78,9 @@ const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
       <Card.Content
         onClick={(e) => {
           if (e.ctrlKey) {
-            console.log(JSON.stringify(dump, undefined, 2));
+            if (debug) {
+              console.log(JSON.stringify(dump, undefined, 2));
+            }
           } else {
             dispatch(MessageUiSlice.setCurrentVideoFileUid(videoFileUid));
             router.push(`/player`, undefined, { shallow: true });

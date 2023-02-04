@@ -18,6 +18,7 @@ export const Home = () => {
 
     if (stage === 'AUTHENTICATED') {
       dispatch(ConfigSlice.isNsfw());
+      dispatch(ConfigSlice.debug());
       dispatch(ChatSlice.refreshChats())
         .unwrap()
         .then(() => {

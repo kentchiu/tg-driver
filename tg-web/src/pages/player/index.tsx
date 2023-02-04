@@ -22,6 +22,7 @@ const PlayerPage = () => {
 
   React.useEffect(() => {
     dispatch(ConfigSlice.isNsfw());
+    dispatch(ConfigSlice.debug());
     dispatch(ChatSlice.fetchChats());
     dispatch(MessageSlice.fetchVideoMessages());
   }, [dispatch]);
