@@ -4,21 +4,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface ConfigState {
   nsfw: boolean;
+  debug: boolean;
 }
 
 const initialState: ConfigState = {
-  nsfw: true
+  nsfw: false,
+  debug: false
 };
 
 // ********** thunks *********
-
-// export const isNsfw = createAsyncThunk('isNsfw', () => {
-//   return storage.getNsfw();
-// });
-
-// export const setNsfw = createAsyncThunk('setNsfw', (nsfw: boolean) => {
-//   setNsfw(nsfw);
-// });
 
 // ********** chatSlice *********
 
@@ -32,24 +26,23 @@ export const slice = createSlice({
     setNsfw: (state, action: PayloadAction<boolean>) => {
       state.nsfw = action.payload;
       storage.setNsfw(state.nsfw);
+    },
+    debug: (state) => {
+      state.debug = storage.getDebug();
+    },
+    setDebug: (state, action: PayloadAction<boolean>) => {
+      state.debug = action.payload;
+      storage.setDebug(state.debug);
     }
   }
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(isNsfw.fulfilled, (state, action) => {
-  //       state.nsfw = action.payload;
-  //     })
-  //     .addCase(setNsfw.fulfilled, (state, action) => {
-  //       state.nsfw = action.payload;
-  //     });
-  // }
 });
 
 // ********** selectors **********
 
 export const selectIsNsfw = (state: AppState) => state.configs.nsfw;
+export const selectDebug = (state: AppState) => state.configs.debug;
 
 // eslint-disable-next-line no-empty-pattern
-export const { setNsfw, isNsfw } = slice.actions;
+export const { setNsfw, isNsfw, setDebug, debug } = slice.actions;
 const reducer = slice.reducer;
 export { reducer };

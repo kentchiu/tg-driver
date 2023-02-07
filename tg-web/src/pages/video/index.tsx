@@ -1,10 +1,9 @@
 import { Card, Image } from '@/app/components';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Selectors } from '@/app/stores';
-import { formatDate } from '@/app/utils';
-import { Avatar, ChatSlice } from '@/features/chat';
+import { ChatSlice } from '@/features/chat';
 import { MainMenu } from '@/features/layout';
-import { MessageSlice, MessageUiSlice, useVideoFile, VideoInfo } from '@/features/message';
+import { MessageHooks, MessageSlice, MessageUiSlice, VideoInfo } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
@@ -15,6 +14,7 @@ const MessageVideoPage = () => {
 
   React.useEffect(() => {
     dispatch(ConfigSlice.isNsfw());
+    dispatch(ConfigSlice.debug());
     dispatch(ChatSlice.fetchChats());
     dispatch(MessageSlice.fetchVideoMessages());
   }, [dispatch]);
@@ -61,9 +61,10 @@ const MessageVideoGrid = () => {
 const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const debug = useAppSelector((state) => state.configs.debug);
 
-  const { messages, videos, photos, photoFiles } = useVideoFile(videoFileUid);
-  const forTest = useVideoFile(videoFileUid);
+  const { photos, photoFiles } = MessageHooks.useVideoFile(videoFileUid);
+  const dump = MessageHooks.useVideoFile(videoFileUid);
 
   const photo = photos[0];
   let clx = '';
@@ -72,100 +73,29 @@ const GridItem = ({ videoFileUid }: { videoFileUid: number }) => {
   } else {
     clx = 'h-full';
   }
-
-  const handleDump = () => {
-    const debug = false;
-    if (debug) {
-      console.log(JSON.stringify(forTest, undefined, '\t'));
-      const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
-      const videoFileNames = uniqByReduce(videos.map((val) => val.fileName));
-      const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
-      const captions = uniqByReduce(videoCaptions.concat(photoCaptions));
-      console.log('videoCaptions', videoCaptions);
-      console.log('videoCaptions', videoFileNames);
-      console.log('photoCaptions', photoCaptions);
-      console.log('captions', captions);
-    }
-  };
-
   return (
     <Card>
       <Card.Content
-        onClick={() => {
-          dispatch(MessageUiSlice.setCurrentVideoFileUid(videoFileUid));
-          router.push(`/player`, undefined, { shallow: true });
+        onClick={(e) => {
+          if (e.ctrlKey) {
+            if (debug) {
+              console.log(JSON.stringify(dump, undefined, 2));
+            }
+          } else {
+            dispatch(MessageUiSlice.setCurrentVideoFileUid(videoFileUid));
+            router.push(`/player`, undefined, { shallow: true });
+          }
         }}
       >
-        <div className="flex h-fit justify-center bg-gray-800" onMouseEnter={handleDump}>
+        <div className="flex h-fit justify-center bg-gray-800">
           <Image file={photoFiles[0]} className={clsx(clx)}></Image>
         </div>
       </Card.Content>
       <Card.Footer>
-        <Info videoFileUid={videoFileUid}></Info>
+        <VideoInfo videoFileUid={videoFileUid} lineClamp={2}></VideoInfo>
       </Card.Footer>
     </Card>
   );
-};
-
-function uniqByReduce<T>(array: T[]): T[] {
-  return array.reduce((acc: T[], cur: T) => {
-    if (!acc.includes(cur)) {
-      acc.push(cur);
-    }
-    return acc;
-  }, []);
-}
-
-const Info = ({ videoFileUid }: { videoFileUid: number }) => {
-  const { videos, videoFile } = useVideoFile(videoFileUid);
-  return (
-    <div className="flex h-full flex-col gap-2 p-1 text-sm">
-      <VideoInfo videoUid={videos[0].uid}></VideoInfo>
-      <div className={clsx('flex flex-grow flex-col')}>
-        <Captions videoFileUid={videoFileUid}></Captions>
-      </div>
-
-      <div className="flex  items-center justify-between">
-        <Avatars videoFileUid={videoFileUid}></Avatars>
-        {videoFile && <Time date={videoFile.lastModified}></Time>}
-      </div>
-    </div>
-  );
-};
-
-const Captions = ({ videoFileUid }: { videoFileUid: number }) => {
-  const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
-  const { videos, photos } = useVideoFile(videoFileUid);
-  const videoCaptions = uniqByReduce(videos.map((val) => val.caption));
-  const photoCaptions = uniqByReduce(photos.map((val) => val.caption));
-  const captions = uniqByReduce(videoCaptions.concat(photoCaptions)).map((val, idx) => (
-    <div className={clsx('line-clamp-2', { 'blur-sm': nsfw })} key={idx}>
-      {val}
-    </div>
-  ));
-  return <>{captions}</>;
-};
-
-const Avatars = ({ videoFileUid }: { videoFileUid: number }) => {
-  const { messages } = useVideoFile(videoFileUid);
-  const chatEntities = useAppSelector(ChatSlice.selectChatEntities);
-  const avatars = messages.map((message) => {
-    const chat = chatEntities[message.chat];
-    return (
-      <div key={message.chat} title={chat?.name}>
-        <Avatar chatUid={message.chat} size="xs"></Avatar>
-      </div>
-    );
-  });
-  return (
-    <dl>
-      <dt className="flex justify-end -space-x-1.5 ">{avatars}</dt>
-    </dl>
-  );
-};
-
-const Time = ({ date }: { date: number }) => {
-  return <div className="text-right text-xs text-gray-700">{formatDate(new Date(date))}</div>;
 };
 
 export default MessageVideoPage;

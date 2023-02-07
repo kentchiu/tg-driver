@@ -40,8 +40,8 @@ export const fetchVideoMessages = createAsyncThunk('message/fetchVideoMessages',
   return { ...normalizeData, total: data.total };
 });
 
-export const addToDownloadQueue = createAsyncThunk('message/queue', async (args: { messageUid: number }) => {
-  return await FileApi.addToDownloadQueue(args.messageUid);
+export const fixBrokenImage = createAsyncThunk('message/fixBrokerImage', async (args: { messageUid: number }) => {
+  return await MessageApi.fixBrokenImage(args.messageUid);
 });
 
 // ********** messageSlice *********

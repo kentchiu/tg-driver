@@ -4,13 +4,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface UiState {
   currentMessageUid: number;
   currentVideoFileUid: number;
-  columnSize: number;
+  columnCount: number;
 }
 
 const initialState: UiState = {
   currentMessageUid: -1,
   currentVideoFileUid: -1,
-  columnSize: 6
+  columnCount: 6
 };
 
 const slice = createSlice({
@@ -30,7 +30,7 @@ const slice = createSlice({
       state.currentVideoFileUid = previous(action.payload.currentUid, action.payload.uids);
     },
     setColumnSize: (state, action: PayloadAction<number>) => {
-      state.columnSize = action.payload;
+      state.columnCount = action.payload;
     }
   },
   extraReducers: (builder) => {

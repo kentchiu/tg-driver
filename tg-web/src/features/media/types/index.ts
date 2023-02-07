@@ -29,8 +29,39 @@ export interface File {
   localFilePath: string;
 }
 
-export interface DownloadItem {
-  path: string;
+export interface TdFile {
+  id: number;
+  size: number;
   expectedSize: number;
+  local: Local;
+  remote: Remote;
+  constructor: number;
+}
+
+export interface Local {
+  path: string;
+  canBeDownloaded: boolean;
+  canBeDeleted: boolean;
+  isDownloadingActive: boolean;
+  isDownloadingCompleted: boolean;
+  downloadOffset: number;
+  downloadedPrefixSize: number;
+  downloadedSize: number;
+  constructor: number;
+}
+
+export interface Remote {
+  id: string;
+  uniqueId: string;
+  isUploadingActive: boolean;
+  isUploadingCompleted: boolean;
+  uploadedSize: number;
+  constructor: number;
+}
+
+export interface DownloadItem {
+  messageUid: number;
+  fileId: number;
+  size: number;
   downloadedSize: number;
 }

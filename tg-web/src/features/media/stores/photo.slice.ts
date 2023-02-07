@@ -33,11 +33,6 @@ export const slice = createSlice({
           photoAdapter.upsertMany(state, action.payload.entities.photos);
         }
       });
-    // .addCase(MessageVideoSlice.fetchMessageVideos.fulfilled, (state, action) => {
-    //   if (action.payload.entities.photos) {
-    //     photoAdapter.upsertMany(state, action.payload.entities.photos);
-    //   }
-    // });
   }
 });
 

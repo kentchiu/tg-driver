@@ -1,22 +1,18 @@
 import { Card } from '@/app/components';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-
-import { BanRuleSlice, MessageUiSlice } from '@/app/features/message/stores';
-import { MessageType } from '@/app/features/message/types';
 import { selectTopMessages } from '@/app/stores/selectors';
+import { ConfigSlice } from '@/features/misc';
 import clsx from 'clsx';
 import React, { ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react';
-import toast from 'react-hot-toast';
-import { ContextMenu, MessageInfo, MessagePhoto, MessageThumbnail } from '.';
+import { MessageInfo, MessagePhoto, MessageThumbnail } from '.';
+import { useMessage } from '../hooks/useDumpMessage';
 import { selectMessageByUid } from '../stores/message.slice';
+import { setCurrentMessageUid } from '../stores/messageUI.slice';
+import { MessageType } from '../types';
 
 export type ScrollToHandle = {
   toTop: () => void;
   toBottom: () => void;
-};
-
-type MessageGridProps = {
-  //
 };
 
 const useScrollTo = (ref: ForwardedRef<ScrollToHandle>) => {
@@ -38,8 +34,17 @@ const useScrollTo = (ref: ForwardedRef<ScrollToHandle>) => {
   return { topRef, bottomRef };
 };
 
-export const MessageGrid = forwardRef<ScrollToHandle, MessageGridProps>(function MessageGrid2(props, ref) {
+type MessageGridProps = {
+  columnCount: number;
+};
+
+export const MessageGrid = forwardRef<ScrollToHandle, MessageGridProps>(function MessageGrid2(
+  { columnCount = 6 },
+  ref
+) {
   const messages = useAppSelector(selectTopMessages);
+
+  // use tailwind safe_list
   const toGridColumn = (columnSize: number) => {
     let col = 'grid-cols-6';
     switch (columnSize) {
@@ -85,8 +90,7 @@ export const MessageGrid = forwardRef<ScrollToHandle, MessageGridProps>(function
     return col;
   };
 
-  const columnSize = useAppSelector((state) => state.messageUi.columnSize);
-  const col = toGridColumn(columnSize);
+  const col = toGridColumn(columnCount);
   const { topRef, bottomRef } = useScrollTo(ref);
 
   return (
@@ -97,15 +101,6 @@ export const MessageGrid = forwardRef<ScrollToHandle, MessageGridProps>(function
           messages.map((message) => {
             return (
               <React.Fragment key={message.uid}>
-                {/* <ContextMenu
-                  targetId={`message-${message.uid}`}
-                  message={message}
-                  onBanImage={(fileUniqueId) => dispatch(BanRuleSlice.banPhoto({ fileUniqueId }))}
-                  onBanKeyword={(keyword) => {
-                    dispatch(BanRuleSlice.banMessage({ keyword }));
-                    toast.success(`Ban keyword: [${keyword}]`);
-                  }}
-                /> */}
                 <div id={`message-${message.uid}`}>
                   <GridItem key={message.uid} messageUid={message.uid}></GridItem>
                 </div>
@@ -122,18 +117,23 @@ export const MessageGrid = forwardRef<ScrollToHandle, MessageGridProps>(function
 const GridItem = ({ messageUid }: { messageUid: number; banIds?: number[] }) => {
   const dispatch = useAppDispatch();
   const message = useAppSelector((state) => selectMessageByUid(state, messageUid));
+  const debug = useAppSelector(ConfigSlice.selectDebug);
+  const dump = useMessage(messageUid);
   return (
     <>
       <Card>
         <Card.Content
-          onClick={() => {
-            dispatch(MessageUiSlice.setCurrentMessageUid(messageUid));
+          onClick={(e) => {
+            if (e.ctrlKey) {
+              if (debug) {
+                console.log(JSON.stringify(dump, undefined, 2));
+              }
+            } else {
+              dispatch(setCurrentMessageUid(messageUid));
+            }
           }}
         >
           <div className="relative">
-            {/* {message!.banByRules!.length > 0 ? (
-              <NoSymbolIcon className="absolute z-10 h-24 w-24  text-red-900" />
-            ) : undefined} */}
             {message?.type === MessageType.Photo && <MessagePhoto messageUid={messageUid} />}
             {message?.type === MessageType.Video && <MessageThumbnail messageUid={messageUid} />}
           </div>

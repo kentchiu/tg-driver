@@ -1,12 +1,10 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { AppState, Selectors } from '@/app/stores';
-import { toDuration } from '@/app/utils';
-import { Avatar, ChatSlice } from '@/features/chat';
+import { ChatSlice } from '@/features/chat';
 import { MainMenu } from '@/features/layout';
 import { PlayerHooks, Toolbar, VideoPlayer } from '@/features/media';
-import { MessageSlice, MessageUiSlice, useVideoFile } from '@/features/message';
+import { MessageSlice, MessageUiSlice, VideoInfo } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
-import clsx from 'clsx';
 import React from 'react';
 
 /**
@@ -24,10 +22,10 @@ const PlayerPage = () => {
 
   React.useEffect(() => {
     dispatch(ConfigSlice.isNsfw());
+    dispatch(ConfigSlice.debug());
     dispatch(ChatSlice.fetchChats());
     dispatch(MessageSlice.fetchVideoMessages());
   }, [dispatch]);
-
   const videoFiles = useAppSelector(Selectors.selectVideoFiles);
   const videoFileUid = useAppSelector((state: AppState) => state.messageUi.currentVideoFileUid);
   const playerSource = PlayerHooks.usePlayerSource(videoFileUid);
@@ -51,7 +49,7 @@ const PlayerPage = () => {
             <nav className="flex h-full w-96">
               <div className="w-full flex-col overflow-y-auto bg-gray-800">
                 <Toolbar></Toolbar>
-                <Info videoFileUid={videoFileUid} />
+                <VideoInfo videoFileUid={videoFileUid} stretch={false} />
               </div>
             </nav>
             <main className="mb-14 flex w-full flex-col overflow-y-auto overflow-x-hidden bg-gray-900">
@@ -66,36 +64,4 @@ const PlayerPage = () => {
   );
 };
 
-const Info = ({ videoFileUid }: { videoFileUid: number }) => {
-  const { messages, videos, photos, photoFiles } = useVideoFile(videoFileUid);
-  const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
-  const msgs = messages.map((message) => {
-    const photoInfos = photos
-      .filter((photo) => photo.uid === message.photo)
-      .map((p) => <div key={p.uid}>{p.caption}</div>);
-    const videoInfos = videos
-      .filter((video) => video.uid === message.video)
-      .map((video) => {
-        return (
-          <>
-            <div key={video.uid + 'caption'}>caption: {video.caption}</div>
-            <div key={video.uid + 'duration'}>duration: {toDuration(video.duration * 1000).format('mm:ss')}</div>
-            <div key={video.uid + 'fileName'}>fileName: {video.fileName}</div>
-            <div key={video.uid + 'size'}>fileSize: {video.fileSize}</div>
-          </>
-        );
-      });
-
-    return (
-      <div key={message.uid} className="flex items-center even:opacity-50">
-        <Avatar chatUid={message.chat} size="xs"></Avatar>
-        <div>
-          <div className={clsx('flex flex-col', { 'blur-sm': nsfw })}>{photoInfos}</div>
-          <div className={clsx('flex flex-col', { 'blur-sm': nsfw })}>{videoInfos}</div>
-        </div>
-      </div>
-    );
-  });
-  return <>{msgs}</>;
-};
 export default PlayerPage;

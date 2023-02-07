@@ -20,3 +20,14 @@ export const listMessages = (params: URLSearchParams): Promise<PagingData<Messag
 export const listMessageVideos = (): Promise<PagingData<Message>> => {
   return axios.get(`/message/videos?pageSize=5000`);
 };
+
+export interface BrokenImage {
+  path: string;
+  fileUniqueId: string;
+  isDownloadingCompleted: boolean;
+  id: number;
+}
+
+export const fixBrokenImage = (uid: number): Promise<BrokenImage> => {
+  return axios.patch(`/messages/${uid}?action=fixImage`, {});
+};
