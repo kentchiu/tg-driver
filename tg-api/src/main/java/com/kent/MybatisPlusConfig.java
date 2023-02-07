@@ -20,22 +20,6 @@ public class MybatisPlusConfig {
     }
 
 
-//    @Bean
-//    public MybatisPlusPropertiesCustomizer plusPropertiesCustomizer() {
-//        return plusProperties -> plusProperties.getGlobalConfig().setIdentifierGenerator(new IdentifierGenerator() {
-//
-//            @Override
-//            public Long nextId(Object entity) {
-//                return new Sequence().nextId();
-//            }
-//
-//            @Override
-//            public String nextUUID(Object entity) {
-//                return UUID.randomUUID().toString();
-//            }
-//        });
-//    }
-
     /**
      * 分页插件
      */

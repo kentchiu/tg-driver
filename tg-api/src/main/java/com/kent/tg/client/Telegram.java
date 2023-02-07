@@ -1,8 +1,8 @@
 package com.kent.tg.client;
 
 import com.kent.base.domain.DomainUtil;
+import com.kent.tg.domain.dto.AuthInputDto;
 import it.tdlight.client.*;
-import it.tdlight.common.ExceptionHandler;
 import it.tdlight.common.Init;
 import it.tdlight.common.utils.CantLoadLibrary;
 import it.tdlight.jni.TdApi;
@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -115,16 +117,13 @@ public class Telegram implements ApplicationListener<ContextRefreshedEvent> {
         client.addUpdateHandler(TdApi.UpdateFile.class, update -> eventPublisher.publishEvent(update));
         client.addUpdateHandler(TdApi.UpdateDeleteMessages.class, update -> eventPublisher.publishEvent(update));
 
-        client.addDefaultExceptionHandler(new ExceptionHandler() {
-            @Override
-            public void onException(Throwable e) {
-                logger.error("error", e);
-                if (e instanceof TelegramError error) {
-                    client.sendClose();
-                    fileUtils.deleteFileByName(TgFileUtils.CONFIG_FILE);
-                    fileUtils.deleteFileByName(TgFileUtils.BINLOG_FILE);
-                    eventPublisher.publishEvent(error);
-                }
+        client.addDefaultExceptionHandler(e -> {
+            logger.error("error", e);
+            if (e instanceof TelegramError error) {
+                client.sendClose();
+                fileUtils.deleteFileByName(TgFileUtils.CONFIG_FILE);
+                fileUtils.deleteFileByName(TgFileUtils.BINLOG_FILE);
+                eventPublisher.publishEvent(error);
             }
         });
 
@@ -138,10 +137,103 @@ public class Telegram implements ApplicationListener<ContextRefreshedEvent> {
         client.waitForExit();
     }
 
-    // NOTE：會卡住， 慎用
-    public <T extends TdApi.Object> Result<T> sendSynchronously(TdApi.Function request, Class<T> resultType, int timeoutSeconds) {
+    public Result<TdApi.File> syncDownload(TdApi.File file) {
+        int priority = 1;
+        int offset = 0;
+        int limit = 0;
+        boolean synchronous = true;
+        TdApi.DownloadFile request = new TdApi.DownloadFile(file.id, priority, offset, limit, synchronous);
+        logger.info("Send download file request: {} , file: {}", DomainUtil.convertPojoToMap(request), DomainUtil.convertPojoToMap(file));
+        return sendSynchronously(request, TdApi.File.class, 30);
+    }
+
+    /**
+     * Note: asyncDownload may trigger some kind of listener which listening to TdApi.UpdateFile Event. ex: UpdateFileListener
+     *
+     * @param file
+     */
+    public void asyncDownload(TdApi.File file) {
+        int priority = 1;
+        int offset = 0;
+        int limit = 0;
+        boolean synchronous = false;
+        TdApi.DownloadFile request = new TdApi.DownloadFile(file.id, priority, offset, limit, synchronous);
+        logger.info("Send download file request: {} , file: {}", DomainUtil.convertPojoToMap(request), DomainUtil.convertPojoToMap(file));
+        sendAsynchronously(request);
+    }
+
+    public void asyncDownloadByFileId(int fileId) {
+        int priority = 1;
+        int offset = 0;
+        int limit = 0;
+        boolean synchronous = false;
+        TdApi.DownloadFile request = new TdApi.DownloadFile(fileId, priority, offset, limit, synchronous);
+        sendAsynchronously(request);
+    }
+
+    public Result<TdApi.Message> getMessage(long messageId, long chatId) {
+        var request = new TdApi.GetMessage(chatId, messageId);
+        Result<TdApi.Message> result = sendSynchronously(request, TdApi.Message.class, 30);
+        if (result.isError()) {
+            logger.error("Get Message fail. {}", LoggerUtils.shrinkText(result.getError().toString(), 1000));
+        } else {
+            TdApi.Message message = result.get();
+            logger.warn("Message which have missing file: {}", LoggerUtils.shrinkText(message.toString(), 1000));
+        }
+        return result;
+    }
+
+    public Map<Long, TdApi.Chat> listChats() {
+        Map<Long, TdApi.Chat> chatMap = new HashMap<>();
+        TdApi.GetChats request = new TdApi.GetChats(new TdApi.ChatListMain(), 100);
+        Result<TdApi.Chats> result = sendSynchronously(request, TdApi.Chats.class, 10);
+        if (!result.isError()) {
+            long[] chatIds = result.get().chatIds;
+            logger.info("Fetch MainChatIds: {}", chatIds);
+
+            for (long chatId : chatIds) {
+
+                if (!chatMap.containsKey(chatId)) {
+                    Result<TdApi.Chat> result2 = sendSynchronously(new TdApi.GetChat(chatId), TdApi.Chat.class, 10);
+                    if (result.isError()) {
+                        logger.error("Receive an error for GetChats: " + result2.getError());
+                    } else {
+                        chatMap.put(chatId, result2.get());
+                    }
+                }
+            }
+
+        } else {
+            logger.error("Fetch MainChatIds fail: {}", result.error());
+        }
+        return chatMap;
+    }
+
+    public Result<TdApi.Chat> getChat(Long chatId) {
+        var request = new TdApi.GetChat(chatId);
+        Result<TdApi.Chat> chatResult = sendSynchronously(request, TdApi.Chat.class, 30);
+        return chatResult;
+    }
+
+    public Result<TdApi.Object> getAuthCode(AuthInputDto dto) {
+        TdApi.CheckAuthenticationCode request = new TdApi.CheckAuthenticationCode(dto.getCode());
+        Result<TdApi.Object> objectResult = sendSynchronously(request, TdApi.Object.class, 30);
+        return objectResult;
+    }
+
+    /**
+     * NOTE: If possible, use high-level APIs in this class before resorting to this API.
+     * NOTICE: This API may be block out until request timeout.
+     *
+     * @param request
+     * @param resultType
+     * @param timeoutSeconds
+     * @param <T>
+     * @return
+     */
+    private <T extends TdApi.Object> Result<T> sendSynchronously(TdApi.Function request, Class<T> resultType, int timeoutSeconds) {
         var response = new CompletableFuture<>();
-        logger.info("[SEND SYNC] ==> {}, {}", request, timeoutSeconds);
+        logger.info("[SEND SYNC] ==> {}", LoggerUtils.shrinkText(request.toString(), 1000));
         client.send(request, response::complete);
         try {
             return (Result<T>) response.completeOnTimeout(new TdApi.Error(408, "Request Timeout"), timeoutSeconds, TimeUnit.SECONDS).get();
@@ -152,7 +244,7 @@ public class Telegram implements ApplicationListener<ContextRefreshedEvent> {
         }
     }
 
-    public void sendAsynchronously(TdApi.Function request) {
+    private void sendAsynchronously(TdApi.Function request) {
         GenericResultHandler<TdApi.Object> objectGenericResultHandler = result -> {
             if (result.isError()) {
                 var object = result.get();
@@ -166,9 +258,8 @@ public class Telegram implements ApplicationListener<ContextRefreshedEvent> {
         sendAsynchronously(request, objectGenericResultHandler);
     }
 
-    public void sendAsynchronously(TdApi.Function request, GenericResultHandler resultHandler) {
+    private void sendAsynchronously(TdApi.Function request, GenericResultHandler resultHandler) {
         client.send(request, resultHandler);
     }
-
 
 }

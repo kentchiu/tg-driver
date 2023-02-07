@@ -1,9 +1,12 @@
 package com.kent.tg.client;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.FileSystemUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,6 +63,20 @@ public class TgFileUtils {
             instance = new TgFileUtils();
         }
         return instance;
+    }
+
+    @NotNull
+    public static String toRelatePath(String absolutePath) {
+        String p = absolutePath.replaceAll("\\\\", "/");
+        String relatePath;
+        if (StringUtils.contains(p, "/data/")) {
+            relatePath = "data/" + StringUtils.substringAfter(p, "/data/");
+        } else if (StringUtils.contains(p, "/downloads/")) {
+            relatePath = "downloads/" + StringUtils.substringAfter(p, "/downloads/");
+        } else {
+            relatePath = p;
+        }
+        return relatePath;
     }
 
     private void TgFileUtils() {
@@ -123,5 +140,11 @@ public class TgFileUtils {
             logger.warn("Delete profile home [" + profile + "] fail", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public File[] listAllVideoFiles() {
+        Path videoHome = getPathByName(TgFileUtils.VIDEO_HOME);
+        File[] allVideoFiles = videoHome.toFile().listFiles();
+        return allVideoFiles;
     }
 }

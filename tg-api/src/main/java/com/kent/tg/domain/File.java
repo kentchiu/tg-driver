@@ -5,10 +5,6 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.util.Date;
 
 
-//enum FileType {
-//    UNKNOWN, THUMBNAIL, PHOTO, VIDEO, PROFILE_PHOTO
-//}
-
 /**
  * @TableName file
  */
@@ -95,13 +91,5 @@ public class File {
                 '}';
     }
 
-//    public FileType getType() {
-//        String path =  getLocalFilePath();
-//        if (StringUtils.startsWith("/data/thumbnail")) {
-//
-//        } else {
-//            return FileType.UNKNOWN;
-//        }
-//    }
 
 }

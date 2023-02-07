@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 
 public class LoggerUtils {
 
-    private static String shrinkText(String text, int maxWidth) {
+    public static String shrinkText(String text, int maxWidth) {
         return StringUtils.abbreviate(text.replaceAll("\n", " "), maxWidth);
     }
 

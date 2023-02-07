@@ -7,15 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Message Query DTO")
 public class MessageQueryDto extends BaseQuery {
 
-    //    private Long id;
     private Long chatUid;
-//    private String keyword;
-//    private String chatName;
-//    private Boolean showHistory = false;
-//    private Boolean showDeleted = false;
-
-//    private Long beforeMessageId;
-
     private Long[] uids;
 
     @Options(value = {"MessageText", "MessagePhoto", "MessageVideo", "MessageDocument"})
@@ -30,14 +22,6 @@ public class MessageQueryDto extends BaseQuery {
         this.uids = uids;
     }
 
-    //    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
     public String[] getTypes() {
         return types;
     }
@@ -53,44 +37,4 @@ public class MessageQueryDto extends BaseQuery {
     public void setChatUid(Long chatUid) {
         this.chatUid = chatUid;
     }
-//
-//    public String getKeyword() {
-//        return keyword;
-//    }
-//
-//    public void setKeyword(String keyword) {
-//        this.keyword = keyword;
-//    }
-//
-//    public String getChatName() {
-//        return chatName;
-//    }
-//
-//    public void setChatName(String chatName) {
-//        this.chatName = chatName;
-//    }
-//
-//    public Boolean getShowHistory() {
-//        return showHistory;
-//    }
-//
-//    public void setShowHistory(Boolean showHistory) {
-//        this.showHistory = showHistory;
-//    }
-//
-//    public Boolean getShowDeleted() {
-//        return showDeleted;
-//    }
-//
-//    public void setShowDeleted(Boolean showDeleted) {
-//        this.showDeleted = showDeleted;
-//    }
-//
-//    public Long getBeforeMessageId() {
-//        return beforeMessageId;
-//    }
-//
-//    public void setBeforeMessageId(Long beforeMessageId) {
-//        this.beforeMessageId = beforeMessageId;
-//    }
 }

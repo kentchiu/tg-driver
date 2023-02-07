@@ -64,4 +64,13 @@ public class BanRule implements Serializable {
     public void setProperty(String property) {
         this.property = property;
     }
+
+    @Override
+    public String toString() {
+        return "BanRule{" +
+                "uid=" + uid +
+                ", rule='" + rule + '\'' +
+                ", property='" + property + '\'' +
+                '}';
+    }
 }

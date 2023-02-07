@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kent.tg.domain.Chat;
 import com.kent.tg.mapper.ChatMapper;
 import com.kent.tg.service.ChatService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +16,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements ChatService {
-    private final Logger logger = LoggerFactory.getLogger(ChatServiceImpl.class);
-
 
     @Override
     public List<Map<String, Object>> findAllWithMessageCount(Wrapper<Map<String, Object>> queryWrapper) {

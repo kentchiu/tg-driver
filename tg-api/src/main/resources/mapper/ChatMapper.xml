@@ -19,8 +19,7 @@
                profile.exist                       "profile.exist"
         FROM chat
                  LEFT JOIN message ON message.chat_id = chat.chat_id
-                 LEFT JOIN file profile ON profile.file_unique_id = chat.file_unique_id
-            ${ew.customSqlSegment} #
+                 LEFT JOIN file profile ON profile.file_unique_id = chat.file_unique_id ${ew.customSqlSegment} #
         GROUP BY chat.chat_id
     </select>
 
@@ -40,15 +39,5 @@
             ${ew.customSqlSegment}
     </select>
 
-
-    <!--    <select id="findAll" resultType="java.util.Map">-->
-    <!--        select chat.uid      uid,-->
-    <!--               chat.name     name,-->
-    <!--               chat.disabled disabled,-->
-    <!--               file.uid      profile_photo_uid-->
-    <!--        from chat-->
-    <!--                 left join file on file.file_unique_id = chat.file_unique_id-->
-    <!--            ${ew.customSqlSegment}-->
-    <!--    </select>-->
 
 </mapper>

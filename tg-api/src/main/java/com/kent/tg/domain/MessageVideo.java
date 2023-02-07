@@ -134,4 +134,22 @@ public class MessageVideo {
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
     }
+
+    @Override
+    public String toString() {
+        return "MessageVideo{" +
+                "uid=" + uid +
+                ", messageUid=" + messageUid +
+                ", caption='" + caption + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                ", duration=" + duration +
+                ", fileName='" + fileName + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", supportsStreaming=" + supportsStreaming +
+                ", fileUniqueId='" + fileUniqueId + '\'' +
+                ", thumbnailId='" + thumbnailId + '\'' +
+                ", fileSize=" + fileSize +
+                '}';
+    }
 }

@@ -7,8 +7,7 @@ import com.kent.tg.service.TagService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
-        implements TagService {
+public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
 
 }
 

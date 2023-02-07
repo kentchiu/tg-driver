@@ -1,14 +1,13 @@
 package com.kent.tg.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.kent.tg.domain.Message;
 import com.kent.tg.domain.MessagePhoto;
-import it.tdlight.jni.TdApi;
+
+import java.util.Optional;
 
 
 public interface MessagePhotoService extends IService<MessagePhoto> {
 
-    MessagePhoto savePhoto(Message message, TdApi.MessagePhoto tdMessagePhoto);
+    Optional<MessagePhoto> findOneByMessageUid(long messageUid);
 
-    TdApi.PhotoSize getLastPhotoSize(TdApi.MessagePhoto tdMessagePhoto);
 }

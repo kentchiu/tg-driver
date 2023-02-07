@@ -130,4 +130,21 @@ public class Message {
         this.deleteAt = deleteAt;
     }
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "uid=" + uid +
+                ", chatId=" + chatId +
+                ", messageId=" + messageId +
+                ", date=" + date +
+                ", mediaAlbumId=" + mediaAlbumId +
+                ", messageThreadId=" + messageThreadId +
+                ", replyToMessageId=" + replyToMessageId +
+                ", replyInChatId=" + replyInChatId +
+                ", type='" + type + '\'' +
+                ", readAt=" + readAt +
+                ", deleteAt=" + deleteAt +
+                '}';
+    }
+
 }

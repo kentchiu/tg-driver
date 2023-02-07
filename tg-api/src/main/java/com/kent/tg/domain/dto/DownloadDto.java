@@ -29,4 +29,13 @@ public class DownloadDto {
     public void setMessageUid(Long messageUid) {
         this.messageUid = messageUid;
     }
+
+    @Override
+    public String toString() {
+        return "DownloadDto{" +
+                "chatId=" + chatId +
+                ", messageId=" + messageId +
+                ", messageUid=" + messageUid +
+                '}';
+    }
 }

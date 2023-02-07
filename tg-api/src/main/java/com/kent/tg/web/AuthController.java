@@ -2,7 +2,7 @@ package com.kent.tg.web;
 
 import com.kent.tg.client.Telegram;
 import com.kent.tg.daemon.AuthListener;
-import com.kent.tg.domain.dto.AuthDto;
+import com.kent.tg.domain.dto.AuthInputDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.tdlight.client.Result;
 import it.tdlight.jni.TdApi;
@@ -36,10 +36,9 @@ public class AuthController {
     }
 
     @PostMapping("/auth")
-    public Map<String, Object> updatePhoneNumber(@RequestBody AuthDto dto) throws ServiceUnavailableException {
+    public Map<String, Object> updatePhoneNumber(@RequestBody AuthInputDto dto) throws ServiceUnavailableException {
         if (StringUtils.isNotBlank(dto.getCode())) {
-            TdApi.CheckAuthenticationCode request = new TdApi.CheckAuthenticationCode(dto.getCode());
-            Result<TdApi.Object> objectResult = telegram.sendSynchronously(request, TdApi.Object.class, 30);
+            Result<TdApi.Object> objectResult = telegram.getAuthCode(dto);
             if (objectResult.isError()) {
                 var error = objectResult.error().get();
                 return Map.of("error", error.message, "code", error.code);

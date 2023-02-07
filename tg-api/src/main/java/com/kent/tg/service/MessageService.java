@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kent.tg.domain.Message;
-import it.tdlight.jni.TdApi;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -15,7 +15,7 @@ public interface MessageService extends IService<Message> {
 
     int countFindAll(Wrapper<Map<String, Object>> queryWrapper);
 
-    Message saveMessage(TdApi.Message message);
-
     int markAsReadByChatId(long chatId, int lastMessageUid);
+
+    List<Message> findAllMissingPhoto();
 }

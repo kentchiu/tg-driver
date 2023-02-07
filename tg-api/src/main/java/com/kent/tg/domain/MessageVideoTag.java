@@ -72,4 +72,13 @@ public class MessageVideoTag implements Serializable {
     public void setTagUid(Long tagUid) {
         this.tagUid = tagUid;
     }
+
+    @Override
+    public String toString() {
+        return "MessageVideoTag{" +
+                "uid=" + uid +
+                ", messageVideoUid=" + messageVideoUid +
+                ", tagUid=" + tagUid +
+                '}';
+    }
 }

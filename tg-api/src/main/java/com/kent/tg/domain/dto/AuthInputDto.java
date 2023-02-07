@@ -1,6 +1,6 @@
 package com.kent.tg.domain.dto;
 
-public class AuthDto {
+public class AuthInputDto {
     private String phoneNumber;
     private String code;
 

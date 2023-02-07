@@ -77,4 +77,15 @@ public class MessageDocument {
         this.fileUniqueId = fileUniqueId;
     }
 
+    @Override
+    public String toString() {
+        return "MessageDocument{" +
+                "uid=" + uid +
+                ", messageUid=" + messageUid +
+                ", caption='" + caption + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", fileUniqueId='" + fileUniqueId + '\'' +
+                '}';
+    }
 }

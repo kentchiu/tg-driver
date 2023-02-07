@@ -10,7 +10,6 @@ import java.util.Map;
 
 public interface ChatService extends IService<Chat> {
 
-    @Deprecated
     List<Map<String, Object>> findAllWithMessageCount(Wrapper<Map<String, Object>> queryWrapper);
 
 }

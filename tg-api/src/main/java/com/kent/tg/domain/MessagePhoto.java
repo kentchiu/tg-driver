@@ -72,5 +72,15 @@ public class MessagePhoto {
         this.height = height;
     }
 
-
+    @Override
+    public String toString() {
+        return "MessagePhoto{" +
+                "uid=" + uid +
+                ", messageUid=" + messageUid +
+                ", caption='" + caption + '\'' +
+                ", fileUniqueId='" + fileUniqueId + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }

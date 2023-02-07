@@ -71,7 +71,7 @@ mybatis-plus:
 
 logging:
   level: # LEVEL: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
-    com.kent: INFO
+    com.kent: info
   file:
     path: /tg-driver/logs/${spring.application.name}
   logback:
@@ -142,13 +142,18 @@ kent:
 
 logging:
   level: # LEVEL: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
-    com.kent: INFO
-    #    com.kent.tg.mapper.MessageMapper: DEBUG
+    com.kent: info
+    com.kent.tg.daemon.DebugListener: debug
+    com.kent.tg.mapper.MessageMapper: info
     #    com.kent.tg.mapper.MessageMapper.insert: INFO
     #    com.kent.tg.mapper.MessageMapper.delete: DEBUG
-    #    com.kent.tg.mapper.FileMapper: DEBUG
-    com.kent.tg.mapper.ChatMapper: INFO
-    com.kent.tg.mapper.MessageMapper: INFO
-    com.kent.tg.mapper.MessageVideoMapper: DEBUG
-    com.kent.tg.web.VideoController: DEBUG
-    com.kent.tg.daemon.FileExistingCheckTask: DEBUG
+    com.kent.tg.mapper.FileMapper: info
+    com.kent.tg.daemon.VideoFileCheckTask: info
+    com.kent.tg.daemon.RsyncMessagePhotoTask: info
+    com.kent.tg.daemon.DownloadFacade: trace
+  logback:
+    rollingpolicy:
+      max-history: 10
+      total-size-cap: 1000MB
+      max-file-size: 50MB
+

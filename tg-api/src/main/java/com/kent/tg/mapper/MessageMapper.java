@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +23,9 @@ public interface MessageMapper extends BaseMapper<Message> {
 
     int countFindAll(@Param(Constants.WRAPPER) Wrapper<Map<String, Object>> queryWrapper);
 
+    Map<String, Object> findOne(@Param(Constants.WRAPPER) Wrapper<Map<String, Object>> queryWrapper);
+
+    List<Message> findAllMissingPhoto();
 }
 
 

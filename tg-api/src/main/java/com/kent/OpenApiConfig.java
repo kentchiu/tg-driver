@@ -14,15 +14,9 @@ public class OpenApiConfig {
         String groupName = "Telgram服務";
         return new OpenAPI()
                 .info(new Info()
-                                .title(groupName)
-                                .description(groupName)
-                                .version("v1.0")
-//                        .contact(new Contact()
-//                                .name("Arun")
-//                                .url("https://asbnotebook.com")
-//                                .email("asbnotebook@gmail.com"))
-//                        .termsOfService("TOC")
-//                        .license(new License().name("License").url("#"))
+                        .title(groupName)
+                        .description(groupName)
+                        .version("v1.0")
                 );
     }
 }
