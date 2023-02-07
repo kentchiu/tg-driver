@@ -1,18 +1,18 @@
 import { Image } from '@/app/components';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { useAppSelector } from '@/app/hooks';
 import { selectPhotoFileByMessageUid } from '@/app/stores/selectors';
-import { MessageSlice } from '../stores';
+import { useFixImage } from '../hooks/useFixImage';
 
 export const MessagePhoto = ({ messageUid }: { messageUid: number }) => {
   const file = useAppSelector((state) => selectPhotoFileByMessageUid(state, messageUid));
-  const dispatch = useAppDispatch();
+  const { imageFile, fix } = useFixImage(file);
   const handleMissingPhoto = (src: string) => {
     console.error('broken photo image:', src);
-    dispatch(MessageSlice.refreshMessage({ messageUid }));
+    fix(messageUid);
   };
   return (
     <div className="relative">
-      <Image file={file} className="w-full cursor-zoom-in" autoReload={true} onMissingFile={handleMissingPhoto}></Image>
+      <Image file={imageFile} className="w-full cursor-zoom-in" onMissingFile={handleMissingPhoto}></Image>
     </div>
   );
 };

@@ -8,11 +8,10 @@ export type ImageProps = {
   className?: string;
   file?: File;
   fallbackUrl?: string;
-  autoReload?: boolean;
   onMissingFile?: (src: string) => void;
 };
 
-export const Image = ({ className, file, fallbackUrl = '3.jpg', autoReload = false, onMissingFile }: ImageProps) => {
+export const Image = ({ className, file, fallbackUrl = '3.jpg', onMissingFile }: ImageProps) => {
   const nsfw = useAppSelector(ConfigSlice.selectIsNsfw);
   let imgSrc = fallbackUrl;
   if (file) {

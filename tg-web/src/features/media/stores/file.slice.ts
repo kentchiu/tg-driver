@@ -56,12 +56,16 @@ const slice = createSlice({
       .addCase(deleteVideoFile.fulfilled, (state, action) => {
         fileAdapter.removeOne(state, action.meta.arg.uid);
       })
-      .addCase(MessageSlice.refreshMessage.fulfilled, (state, action) => {
-        if (action.payload.entities.photoFiles) {
-          fileAdapter.upsertMany(state, action.payload.entities.photoFiles);
-        }
-        if (action.payload.entities.videoFiles) {
-          fileAdapter.upsertMany(state, action.payload.entities.videoFiles);
+      .addCase(MessageSlice.fixBrokenImage.fulfilled, (state, action) => {
+        const found = state.ids
+          .map((id) => state.entities[id])
+          .find((entity) => entity?.fileUniqueId === action.payload.fileUniqueId);
+
+        if (found) {
+          fileAdapter.updateOne(state, {
+            id: found.uid,
+            changes: { localFilePath: action.payload.path, lastModified: new Date().getTime() }
+          });
         }
       });
   }
@@ -75,20 +79,6 @@ export const {
   selectAll: selectAllFiles,
   selectTotal: selectTotalFiles
 } = fileAdapter.getSelectors<AppState>((state) => state.files);
-
-/**
- * @deprecated
- * @param state
- * @param uniqueId
- * @returns
- */
-export const selectFileByUniqueId = (state: AppState, uniqueId: string | undefined) => {
-  if (uniqueId) {
-    const all = selectAllFiles(state);
-    return all.filter((f) => f.fileUniqueId === uniqueId).at(0);
-  }
-  return undefined;
-};
 
 // eslint-disable-next-line no-empty-pattern
 export const {} = slice.actions;

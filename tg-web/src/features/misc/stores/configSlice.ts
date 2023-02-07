@@ -28,7 +28,6 @@ export const slice = createSlice({
       storage.setNsfw(state.nsfw);
     },
     debug: (state) => {
-      console.log('debug', storage.getDebug());
       state.debug = storage.getDebug();
     },
     setDebug: (state, action: PayloadAction<boolean>) => {

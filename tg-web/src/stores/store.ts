@@ -1,6 +1,6 @@
 import { AuthSlice } from '@/features/auth';
 import { ChatSlice, ChatUiSlice } from '@/features/chat';
-import { FileSlice, PhotoSlice, VideoSlice } from '@/features/media';
+import { DownloadSlice, FileSlice, PhotoSlice, VideoSlice } from '@/features/media';
 import { BanRuleSlice, MessageSlice, MessageUiSlice } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
@@ -17,7 +17,8 @@ const makeStore = () => {
       banRules: BanRuleSlice.reducer,
       messages: MessageSlice.reducer,
       messageUi: MessageUiSlice.reducer,
-      configs: ConfigSlice.reducer
+      configs: ConfigSlice.reducer,
+      downloads: DownloadSlice.reducer
     }
   });
 };

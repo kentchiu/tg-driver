@@ -40,18 +40,8 @@ export const fetchVideoMessages = createAsyncThunk('message/fetchVideoMessages',
   return { ...normalizeData, total: data.total };
 });
 
-export const addToDownloadQueue = createAsyncThunk('message/queue', async (args: { messageUid: number }) => {
-  return await FileApi.addToDownloadQueue(args.messageUid);
-});
-
-export const refreshMessage = createAsyncThunk('message/refresh', async (args: { messageUid: number }) => {
-  const data: Message = await MessageApi.refreshMessage(args.messageUid);
-  const messageSchema = new schema.Object({ chat: chatEntity, photo: photoEntity, video: videoEntity });
-  const normalizeData = normalize(data, messageSchema);
-  // // return { ...normalizeData, total: data.total };
-  console.log('data', normalizeData);
-  // return normalizeData;
-  return normalizeData;
+export const fixBrokenImage = createAsyncThunk('message/fixBrokerImage', async (args: { messageUid: number }) => {
+  return await MessageApi.fixBrokenImage(args.messageUid);
 });
 
 // ********** messageSlice *********

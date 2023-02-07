@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Selectors } from '@/app/stores';
 import { ChatList, ChatSlice, ChatUiSlice, CHAT_ID_ALL } from '@/features/chat';
 import { MainMenu } from '@/features/layout';
+import { DownloadSlice, DownloadStatus } from '@/features/media';
 import { MessageGrid, MessageSlice, MessageUiSlice, Popover, ScrollToHandle } from '@/features/message';
 import { ConfigSlice } from '@/features/misc';
 import { CheckIcon, ChevronDoubleDownIcon } from '@heroicons/react/24/solid';
@@ -65,6 +66,9 @@ const MainLayoutPage = () => {
                 }}
                 value={columnCount}
               ></input>
+              <div>
+                <DownloadStatus />
+              </div>
             </div>
           </header>
           <div className="flex h-full">
