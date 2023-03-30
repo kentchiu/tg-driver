@@ -17,6 +17,7 @@ const useFetchingEffect = () => {
     dispatch(ChatSlice.fetchChats());
     dispatch(ConfigSlice.isNsfw());
     dispatch(ConfigSlice.debug());
+    dispatch(ConfigSlice.pageSize());
   }, [dispatch]);
 
   // fetch message

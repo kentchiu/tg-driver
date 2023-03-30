@@ -20,6 +20,17 @@ const storage = {
   },
   setDebug: (debug: boolean) => {
     window.localStorage.setItem(`${storagePrefix}debug`, JSON.stringify(debug));
+  },
+  getPageSize: (): number => {
+    let pageSize = window.localStorage.getItem(`${storagePrefix}pageSize`);
+    if (pageSize == undefined) {
+      pageSize = '100';
+      window.localStorage.setItem(`${storagePrefix}pageSize`, pageSize);
+    }
+    return parseInt(pageSize);
+  },
+  setPageSize: (pageSize: number) => {
+    window.localStorage.setItem(`${storagePrefix}pageSize`, pageSize.toString());
   }
 };
 

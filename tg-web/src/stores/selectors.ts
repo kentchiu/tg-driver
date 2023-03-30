@@ -7,6 +7,7 @@ import { selectAllFiles } from '@/features/media/stores/file.slice';
 import { selectAllVideos } from '@/features/media/stores/video.slice';
 import { MessageSlice } from '@/features/message';
 import { selectAllMessages } from '@/features/message/stores/message.slice';
+import { ConfigSlice } from '@/features/misc';
 import { createSelector } from 'reselect';
 import { AppState } from '.';
 import { Config } from '../config';
@@ -43,7 +44,7 @@ export const selectTopMessages = (state: AppState) => {
   const all = selectAllMessages(state);
   const chatUid = selectCurrentChatUid(state);
   const messages = all.filter((msg) => msg.chat === chatUid);
-  const results = messages.filter((val) => !val.readAt).slice(0, Config.MESSAGES_PER_PAGE);
+  const results = messages.filter((val) => !val.readAt).slice(0, state.configs.pageSize);
   return results;
 };
 
