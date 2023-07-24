@@ -43,14 +43,18 @@ class TgFileUtilsTest {
         instance.init(tempDir);
         assertEquals(tempDir, instance.getPathByName(TgFileUtils.HOME));
         assertEquals(tempDir.resolve("tdlight-session"), instance.getPathByName(TgFileUtils.SESSION_HOME));
-        assertEquals(tempDir.resolve("tdlight-session/downloads/videos"), instance.getPathByName(TgFileUtils.VIDEO_HOME));
-        assertEquals(tempDir.resolve("tdlight-session/downloads/photos"), instance.getPathByName(TgFileUtils.PHOTO_HOME));
-        assertEquals(tempDir.resolve("tdlight-session/data/thumbnails"), instance.getPathByName(TgFileUtils.THUMBNAIL_HOME));
-        assertEquals(tempDir.resolve("tdlight-session/data/profile_photos"), instance.getPathByName(TgFileUtils.PROFILE_HOME));
-        assertEquals(tempDir.resolve("tdlight-session/data/tg.properties"), instance.getPathByName(TgFileUtils.CONFIG_FILE));
+        assertEquals(tempDir.resolve("tdlight-session/downloads/videos"),
+                instance.getPathByName(TgFileUtils.VIDEO_HOME));
+        assertEquals(tempDir.resolve("tdlight-session/downloads/photos"),
+                instance.getPathByName(TgFileUtils.PHOTO_HOME));
+        assertEquals(tempDir.resolve("tdlight-session/data/thumbnails"),
+                instance.getPathByName(TgFileUtils.THUMBNAIL_HOME));
+        assertEquals(tempDir.resolve("tdlight-session/data/profile_photos"),
+                instance.getPathByName(TgFileUtils.PROFILE_HOME));
+        assertEquals(tempDir.resolve("tdlight-session/data/tg.properties"),
+                instance.getPathByName(TgFileUtils.CONFIG_FILE));
         assertEquals(tempDir.resolve("database/db.sqlite"), instance.getPathByName(TgFileUtils.DB_FILE));
         assertEquals(tempDir.resolve("database/td.binlog"), instance.getPathByName(TgFileUtils.BINLOG_FILE));
     }
-
 
 }
